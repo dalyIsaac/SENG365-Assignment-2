@@ -1,12 +1,6 @@
 <template>
-  <v-app id="keep">
-    <v-navigation-drawer
-      v-model="drawer"
-      fixed
-      clipped
-      class="grey lighten-4"
-      app
-    >
+  <v-app>
+    <v-navigation-drawer v-model="drawer" fixed clipped class="grey lighten-4" app>
       <v-list dense class="grey lighten-4">
         <template v-for="(item, i) in items">
           <v-divider v-if="item.divider" :key="i" dark class="my-3"></v-divider>
@@ -16,9 +10,7 @@
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title class="grey--text">{{
-                item.text
-              }}</v-list-tile-title>
+              <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -35,16 +27,16 @@
 
     <v-content>
       <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-          <router-view></router-view>
-        </v-layout>
+        <router-view></router-view>
       </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script lang="ts">
-export default {
+import Vue from "vue";
+
+export default Vue.extend({
   data: () => ({
     drawer: null,
     items: [
@@ -55,20 +47,12 @@ export default {
     ]
   }),
   methods: {
-    navigateTo: function(path: string): void {
+    navigateTo(path: string): void {
       this.$router.push(path);
     }
   },
   props: {
     source: String
   }
-};
+});
 </script>
-
-<style lang="stylus">
-#keep {
-  .v-navigation-drawer__border {
-    display: none;
-  }
-}
-</style>
