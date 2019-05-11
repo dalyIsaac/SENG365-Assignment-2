@@ -55,7 +55,7 @@ export default {
     ]
   }),
   methods: {
-    navigateTo(path: string): void {
+    navigateTo: function(path: string): void {
       this.$router.push(path);
     }
   },
