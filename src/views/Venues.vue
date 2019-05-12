@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <v-layout align-start justify-start row>
-      <v-text-field label="City" v-model="city"></v-text-field>
+      <v-text-field class="mr-4" label="Name" v-model="name"></v-text-field>
+      <v-text-field class="mr-4" label="City" v-model="city"></v-text-field>
       <v-btn color="info" @click="submit">Search</v-btn>
     </v-layout>
 
@@ -36,6 +37,7 @@ export default Vue.extend({
   components: { Venue: VenueComponent },
   data: () => ({
     city: "",
+    name: "",
     venues: [] as Venue[],
     categories: {} as CategoryTable
   }),
@@ -44,7 +46,7 @@ export default Vue.extend({
       try {
         this.venues = [];
         const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
-          params: { city: this.city || undefined }
+          params: { city: this.city || undefined, q: this.name || undefined }
         })).data;
 
         venues.forEach(({ primaryPhoto, ...venue }, i) => {
