@@ -16,7 +16,7 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar color="green" app absolute clipped-left>
+    <v-toolbar color="green" clipped-left app>
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
       <span class="title ml-3 mr-5">
         Venue
@@ -25,7 +25,7 @@
       <v-spacer></v-spacer>
     </v-toolbar>
 
-    <v-content>
+    <v-content class="container">
       <v-container fluid fill-height>
         <router-view></router-view>
       </v-container>
@@ -56,3 +56,10 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style>
+.container {
+  /* overflow-y: auto;
+  height: 100%; */
+}
+</style>
