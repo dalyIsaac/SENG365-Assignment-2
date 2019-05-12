@@ -8,8 +8,9 @@
         :items="categories"
         item-text="categoryName"
         label="Category"
-        v-model="category"
+        clearable="true"
         return-object
+        v-on:change="updateSelectedCategory"
       ></v-select>
       <v-select
         class="mr-4"
@@ -120,7 +121,7 @@ export default Vue.extend({
   components: { Venue: VenueComponent },
   data: () => ({
     categories: [] as Category[],
-    category: {} as Category,
+    categoryId: undefined as number | undefined,
     city: "",
     desc: true,
     geolocation: null as Position | null,
@@ -216,7 +217,8 @@ export default Vue.extend({
         }
 
         const params = {
-          categoryId: this.category ? this.category.categoryId : undefined,
+          categoryId:
+            this.categoryId !== undefined ? this.categoryId : undefined,
           city: this.city || undefined,
           count: 11,
           myLatitude: latitude,
@@ -266,6 +268,9 @@ export default Vue.extend({
       } else {
         this.startIndex = Number.parseInt(startIndex as string) || 0;
       }
+    },
+    updateSelectedCategory(e?: Category): void {
+      this.categoryId = e ? e.categoryId : undefined;
     }
   },
   props: {
