@@ -26,7 +26,14 @@
 
       <div class="ratingWrapper">
         <p class="font-weight-medium">Mode cost rating</p>
-        <v-rating class="ratingStars" dense half-increments readonly v-model="venue.modeCostRating"></v-rating>
+        <v-rating
+          class="ratingStars"
+          :length="4"
+          dense
+          half-increments
+          readonly
+          v-model="venue.modeCostRating"
+        ></v-rating>
         <p class="ratingText">{{round(venue.modeCostRating, 1)}} / 4</p>
       </div>
 
