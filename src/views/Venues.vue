@@ -43,6 +43,13 @@
         </v-container>
       </v-flex>
     </v-layout>
+
+    <div v-if="moreVenuesExist || startIndex > 0" class="listPosition">
+      <h2 class="listPositionText">{{ startIndex + 1 }} - {{ startIndex + venues.length }}</h2>
+      <v-btn class="listPositionAfter" fab dark small color="primary" v-if="moreVenuesExist">
+        <v-icon dark>keyboard_arrow_right</v-icon>
+      </v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -63,17 +70,30 @@ const sortByOptions = [
 ];
 
 export default Vue.extend({
+  beforeMount() {
+    this.getCategories();
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        this.getCurrentPosition,
+        undefined,
+        { enableHighAccuracy: true }
+      );
+    }
+  },
   components: { Venue: VenueComponent },
   data: () => ({
-    city: "",
-    name: "",
-    venues: [] as Venue[],
-    category: {} as Category,
     categories: [] as Category[],
-    sortByOptions,
-    selectedSort: sortByOptions[0],
+    category: {} as Category,
+    city: "",
     desc: true,
-    geolocation: null as Position | null
+    geolocation: null as Position | null,
+    name: "",
+    selectedSort: sortByOptions[0],
+    sortByOptions,
+    startIndex: 0,
+    moreVenuesExist: false,
+    venues: [] as Venue[]
   }),
   methods: {
     async submit(): Promise<void> {
@@ -99,15 +119,24 @@ export default Vue.extend({
         this.venues = [];
         const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
           params: {
-            city: this.city || undefined,
-            q: this.name || undefined,
             categoryId: this.category ? this.category.categoryId : undefined,
-            sortBy: this.selectedSort.queryKey,
-            reverseSort,
+            city: this.city || undefined,
+            count: 11,
             myLatitude: latitude,
-            myLongitude: longitude
+            myLongitude: longitude,
+            q: this.name || undefined,
+            reverseSort,
+            sortBy: this.selectedSort.queryKey,
+            startIndex: this.startIndex
           }
         })).data;
+
+        if (venues.length > 10) {
+          this.moreVenuesExist = true;
+          venues.pop();
+        } else {
+          this.moreVenuesExist = false;
+        }
 
         venues.forEach(({ primaryPhoto, ...venue }, i) => {
           const currentVenue: Venue = venue;
@@ -137,18 +166,8 @@ export default Vue.extend({
       this.geolocation = position;
       this.sortByOptions.push({ queryKey: "DISTANCE", name: "Distance" });
     }
-  },
-  beforeMount() {
-    this.getCategories();
-
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        this.getCurrentPosition,
-        undefined,
-        { enableHighAccuracy: true }
-      );
-    }
   }
+  
 });
 </script>
 
@@ -156,5 +175,26 @@ export default Vue.extend({
 /* Margin top when height is 36px */
 .mt36 {
   margin-top: 8px;
+}
+
+.listPosition {
+  display: grid;
+  grid-template-columns: 40px auto 40px;
+  width: 200px;
+  margin: auto;
+}
+
+.listPositionBefore {
+  grid-column: 1;
+}
+
+.listPositionText {
+  grid-column: 2;
+  line-height: 50px;
+  text-align: center;
+}
+
+.listPositionAfter {
+  grid-column: 3;
 }
 </style>
