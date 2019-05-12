@@ -6,7 +6,11 @@
           style="{padding: 0; margin: 0; color: white; text-align: center;}"
         >{{ categories[venue.venueId].categoryName }}</p>
       </div>
-      <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg" aspect-ratio="2.75"></v-img>
+      <v-img
+        :src="venue.primaryPhoto"
+        :lazy-src="require('@/assets/imagePlaceholder.jpg')"
+        aspect-ratio="2.75"
+      ></v-img>
 
       <div class="content">
         <v-card-title primary-title>
@@ -47,9 +51,18 @@
 
 <script lang="ts">
 import { round } from "lodash";
+import { Venue } from "../model/Venue";
+import { CategoryTable } from "../model/Category";
 
 export default {
-  props: ["venue", "categories"],
+  props: {
+    venue: {
+      type: Object as () => Venue
+    },
+    categories: {
+      type: Object as () => CategoryTable
+    }
+  },
   methods: { round }
 };
 </script>

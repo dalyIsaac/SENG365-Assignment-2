@@ -1,6 +1,6 @@
 import { Category } from "./Category";
 
-interface VenueBase {
+export interface VenueBase {
   venueId: number;
   venueName: string;
   city: string;
@@ -10,13 +10,13 @@ interface VenueBase {
   meanStarRating: number;
   modeCostRating: number;
   distance: number;
-  primaryPhoto: string;
 }
 
 export interface VenueResponse extends VenueBase {
   categoryId: number;
+  primaryPhoto?: string;
 }
 
 export interface Venue extends VenueBase {
-  category: Category;
+  primaryPhoto?: any;
 }

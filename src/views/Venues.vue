@@ -24,6 +24,7 @@
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
+import { isString } from "lodash";
 
 import { baseUrl } from "../common";
 import { Venue, VenueResponse } from "../model/Venue";
@@ -41,9 +42,20 @@ export default Vue.extend({
   methods: {
     async submit(): Promise<void> {
       try {
-        this.venues = (await axios.get(baseUrl + "/venues", {
+        this.venues = [];
+        const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
           params: { city: this.city || undefined }
         })).data;
+
+        venues.forEach(({ primaryPhoto, ...venue }, i) => {
+          const currentVenue: Venue = venue;
+          if (isString(primaryPhoto)) {
+            currentVenue.primaryPhoto = `${baseUrl}/venues/${
+              venue.venueId
+            }/photos/${primaryPhoto}`;
+          }
+          this.venues.push(currentVenue);
+        });
 
         this.categories = (await axios.get(
           baseUrl + "/categories"
