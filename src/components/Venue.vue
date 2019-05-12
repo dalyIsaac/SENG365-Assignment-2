@@ -4,7 +4,7 @@
       <div style="{width: 100%; background-color: #4c8c4a; padding: 0; margin: 0;}">
         <p
           style="{padding: 0; margin: 0; color: white; text-align: center;}"
-        >{{ categories[venue.venueId].categoryName }}</p>
+        >{{ categories[venue.categoryId - 1].categoryName }}</p>
       </div>
       <v-img
         :src="venue.primaryPhoto"
@@ -52,7 +52,7 @@
 <script lang="ts">
 import { round } from "lodash";
 import { Venue } from "../model/Venue";
-import { CategoryTable } from "../model/Category";
+import { Category } from "@/model/Category";
 
 export default {
   props: {
@@ -60,7 +60,7 @@ export default {
       type: Object as () => Venue
     },
     categories: {
-      type: Object as () => CategoryTable
+      type: Object as () => Category[]
     }
   },
   methods: { round }

@@ -3,7 +3,3 @@ export interface Category {
   categoryName: string;
   categoryDescription: string;
 }
-
-export interface CategoryTable {
-  [key: number]: Category;
-}

@@ -3,6 +3,13 @@
     <v-layout align-start justify-start row>
       <v-text-field class="mr-4" label="Name" v-model="name"></v-text-field>
       <v-text-field class="mr-4" label="City" v-model="city"></v-text-field>
+      <v-select
+        :items="categories"
+        item-text="categoryName"
+        label="Category"
+        v-model="category"
+        return-object
+      ></v-select>
       <v-btn color="info" @click="submit">Search</v-btn>
     </v-layout>
 
@@ -29,7 +36,7 @@ import { isString } from "lodash";
 
 import { baseUrl } from "../common";
 import { Venue, VenueResponse } from "../model/Venue";
-import { Category, CategoryTable } from "../model/Category";
+import { Category } from "../model/Category";
 
 import VenueComponent from "@/components/Venue.vue";
 
@@ -39,14 +46,19 @@ export default Vue.extend({
     city: "",
     name: "",
     venues: [] as Venue[],
-    categories: {} as CategoryTable
+    category: {} as Category | undefined,
+    categories: {} as Category[]
   }),
   methods: {
     async submit(): Promise<void> {
       try {
         this.venues = [];
         const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
-          params: { city: this.city || undefined, q: this.name || undefined }
+          params: {
+            city: this.city || undefined,
+            q: this.name || undefined,
+            categoryId: this.category ? this.category.categoryId : undefined
+          }
         })).data;
 
         venues.forEach(({ primaryPhoto, ...venue }, i) => {
@@ -58,17 +70,21 @@ export default Vue.extend({
           }
           this.venues.push(currentVenue);
         });
-
-        this.categories = (await axios.get(
-          baseUrl + "/categories"
-        )).data.reduce((acc: CategoryTable, curr: Category) => {
-          acc[curr.categoryId] = curr;
-          return acc;
-        }, {});
       } catch (err) {
         console.error(err);
       }
+    },
+    getCategories() {
+      axios
+        .get(baseUrl + "/categories")
+        .then(res => {
+          this.categories = res.data;
+        })
+        .catch(err => console.error(err));
     }
+  },
+  beforeMount() {
+    this.getCategories();
   }
 });
 </script>
