@@ -239,7 +239,9 @@ export default Vue.extend({
     }
   },
   beforeRouteUpdate(to, from, next) {
-    this.updateVenuesFromURL(to.query);
+    if (to.path === "/venues" && isEmpty(to.params)) {
+      this.updateVenuesFromURL(to.query);
+    }
     next();
   }
 });
