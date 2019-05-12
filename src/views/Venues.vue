@@ -19,7 +19,7 @@
         v-model="selectedSort"
         return-object
       ></v-select>
-      <v-btn-toggle @change="change" mandatory class="mt36">
+      <v-btn-toggle @change="updateSortDir" mandatory class="mt36">
         <v-btn flat>
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
@@ -72,7 +72,8 @@ export default Vue.extend({
     categories: [] as Category[],
     sortByOptions,
     selectedSort: sortByOptions[0],
-    desc: true
+    desc: true,
+    geolocation: null as Position | null
   }),
   methods: {
     async submit(): Promise<void> {
@@ -83,10 +84,16 @@ export default Vue.extend({
             reverseSort = this.desc ? true : false;
             break;
           case "COST_RATING":
+          case "DISTANCE":
             reverseSort = this.desc ? false : true;
             break;
           default:
             break;
+        }
+
+        let latitude, longitude;
+        if (this.geolocation) {
+          ({ latitude, longitude } = this.geolocation.coords);
         }
 
         this.venues = [];
@@ -96,7 +103,9 @@ export default Vue.extend({
             q: this.name || undefined,
             categoryId: this.category ? this.category.categoryId : undefined,
             sortBy: this.selectedSort.queryKey,
-            reverseSort
+            reverseSort,
+            myLatitude: latitude,
+            myLongitude: longitude
           }
         })).data;
 
@@ -121,12 +130,24 @@ export default Vue.extend({
         })
         .catch(err => console.error(err));
     },
-    change() {
+    updateSortDir() {
       this.desc = !this.desc;
+    },
+    getCurrentPosition(position: Position): void {
+      this.geolocation = position;
+      this.sortByOptions.push({ queryKey: "DISTANCE", name: "Distance" });
     }
   },
   beforeMount() {
     this.getCategories();
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        this.getCurrentPosition,
+        undefined,
+        { enableHighAccuracy: true }
+      );
+    }
   }
 });
 </script>
