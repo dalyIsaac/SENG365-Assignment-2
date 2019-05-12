@@ -74,8 +74,8 @@ interface GetVenueArgs {
   minStarRating?: number;
   maxCostRating?: number;
   adminId?: number;
-  sortBy: string;
-  reverseSort: boolean;
+  sortBy?: string;
+  reverseSort?: boolean;
   myLatitude?: number;
   myLongitude?: number;
 }
@@ -148,7 +148,11 @@ export default Vue.extend({
         if (!isEmpty(params)) {
           // @ts-ignore
           this.getVenues(params as GetVenueArgs);
+        } else {
+          this.getVenues({});
         }
+      } else {
+        this.getVenues({});
       }
     },
     async getVenues(params: GetVenueArgs): Promise<void> {
