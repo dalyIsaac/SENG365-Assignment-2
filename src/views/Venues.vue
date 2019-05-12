@@ -56,13 +56,28 @@
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
-import { isString } from "lodash";
+import { isString, isEmpty } from "lodash";
 
 import { baseUrl } from "../common";
 import { Venue, VenueResponse } from "../model/Venue";
 import { Category } from "../model/Category";
 
 import VenueComponent from "@/components/Venue.vue";
+
+interface RouterArgs {
+  startIndex?: number;
+  count?: number;
+  city?: string;
+  q?: string;
+  categoryId?: number;
+  minStarRating?: number;
+  maxCostRating?: number;
+  adminId?: number;
+  sortBy: string;
+  reverseSort: boolean;
+  myLatitude?: number;
+  myLongitude?: number;
+}
 
 const sortByOptions = [
   { queryKey: "STAR_RATING", name: "Mean star rating" },
@@ -72,6 +87,40 @@ const sortByOptions = [
 export default Vue.extend({
   beforeMount() {
     this.getCategories();
+
+    if (!isEmpty(this.routerArgs)) {
+      const {
+        startIndex,
+        city,
+        q,
+        categoryId,
+        minStarRating,
+        maxCostRating,
+        adminId,
+        sortBy,
+        reverseSort,
+        myLatitude,
+        myLongitude
+      } = this.routerArgs;
+
+      const params = {
+        startIndex,
+        count: 11,
+        city,
+        q,
+        categoryId,
+        minStarRating,
+        maxCostRating,
+        adminId,
+        sortBy,
+        reverseSort,
+        myLatitude,
+        myLongitude
+      };
+      if (!isEmpty(params)) {
+        this.getVenues(params);
+      }
+    }
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -96,6 +145,32 @@ export default Vue.extend({
     venues: [] as Venue[]
   }),
   methods: {
+    async getVenues(params: RouterArgs): Promise<void> {
+      this.venues = [];
+      // @ts-ignore
+      this.$router.push({ path: "venues", query: params });
+
+      const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
+        params
+      })).data;
+
+      if (venues.length > 10) {
+        this.moreVenuesExist = true;
+        venues.pop();
+      } else {
+        this.moreVenuesExist = false;
+      }
+
+      venues.forEach(({ primaryPhoto, ...venue }, i) => {
+        const currentVenue: Venue = venue;
+        if (isString(primaryPhoto)) {
+          currentVenue.primaryPhoto = `${baseUrl}/venues/${
+            venue.venueId
+          }/photos/${primaryPhoto}`;
+        }
+        this.venues.push(currentVenue);
+      });
+    },
     async submit(): Promise<void> {
       try {
         let reverseSort = false;
@@ -116,37 +191,18 @@ export default Vue.extend({
           ({ latitude, longitude } = this.geolocation.coords);
         }
 
-        this.venues = [];
-        const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
-          params: {
-            categoryId: this.category ? this.category.categoryId : undefined,
-            city: this.city || undefined,
-            count: 11,
-            myLatitude: latitude,
-            myLongitude: longitude,
-            q: this.name || undefined,
-            reverseSort,
-            sortBy: this.selectedSort.queryKey,
-            startIndex: this.startIndex
-          }
-        })).data;
-
-        if (venues.length > 10) {
-          this.moreVenuesExist = true;
-          venues.pop();
-        } else {
-          this.moreVenuesExist = false;
-        }
-
-        venues.forEach(({ primaryPhoto, ...venue }, i) => {
-          const currentVenue: Venue = venue;
-          if (isString(primaryPhoto)) {
-            currentVenue.primaryPhoto = `${baseUrl}/venues/${
-              venue.venueId
-            }/photos/${primaryPhoto}`;
-          }
-          this.venues.push(currentVenue);
-        });
+        const params = {
+          categoryId: this.category ? this.category.categoryId : undefined,
+          city: this.city || undefined,
+          count: 11,
+          myLatitude: latitude,
+          myLongitude: longitude,
+          q: this.name || undefined,
+          reverseSort,
+          sortBy: this.selectedSort.queryKey,
+          startIndex: this.startIndex
+        };
+        this.getVenues(params);
       } catch (err) {
         console.error(err);
       }
@@ -166,8 +222,12 @@ export default Vue.extend({
       this.geolocation = position;
       this.sortByOptions.push({ queryKey: "DISTANCE", name: "Distance" });
     }
+  },
+  props: {
+    routerArgs: {
+      type: Object as () => Exclude<RouterArgs, "count">
+    }
   }
-  
 });
 </script>
 

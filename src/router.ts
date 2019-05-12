@@ -15,12 +15,12 @@ export default new Router({
     },
     {
       path: "/venues",
-      name: "venues",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Venues.vue")
+        import(/* webpackChunkName: "about" */ "./views/Venues.vue"),
+      props: ({ query }) => {
+        const { count, ...routerArgs } = query;
+        return { routerArgs };
+      }
     }
   ]
 });
