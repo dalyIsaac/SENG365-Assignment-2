@@ -63,8 +63,9 @@ import { Venue, VenueResponse } from "../model/Venue";
 import { Category } from "../model/Category";
 
 import VenueComponent from "@/components/Venue.vue";
+import { Dictionary } from "vue-router/types/router";
 
-interface RouterArgs {
+interface GetVenueArgs {
   startIndex?: number;
   count?: number;
   city?: string;
@@ -87,40 +88,7 @@ const sortByOptions = [
 export default Vue.extend({
   beforeMount() {
     this.getCategories();
-
-    if (!isEmpty(this.routerArgs)) {
-      const {
-        startIndex,
-        city,
-        q,
-        categoryId,
-        minStarRating,
-        maxCostRating,
-        adminId,
-        sortBy,
-        reverseSort,
-        myLatitude,
-        myLongitude
-      } = this.routerArgs;
-
-      const params = {
-        startIndex,
-        count: 11,
-        city,
-        q,
-        categoryId,
-        minStarRating,
-        maxCostRating,
-        adminId,
-        sortBy,
-        reverseSort,
-        myLatitude,
-        myLongitude
-      };
-      if (!isEmpty(params)) {
-        this.getVenues(params);
-      }
-    }
+    this.updateVenuesFromURL(this.routerArgs);
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -145,10 +113,46 @@ export default Vue.extend({
     venues: [] as Venue[]
   }),
   methods: {
-    async getVenues(params: RouterArgs): Promise<void> {
+    updateVenuesFromURL(
+      routerArgs: Dictionary<string | (string | null)[]>
+    ): void {
+      if (!isEmpty(routerArgs)) {
+        const {
+          startIndex,
+          city,
+          q,
+          categoryId,
+          minStarRating,
+          maxCostRating,
+          adminId,
+          sortBy,
+          reverseSort,
+          myLatitude,
+          myLongitude
+        } = routerArgs;
+
+        const params = {
+          startIndex,
+          count: 11,
+          city,
+          q,
+          categoryId,
+          minStarRating,
+          maxCostRating,
+          adminId,
+          sortBy,
+          reverseSort,
+          myLatitude,
+          myLongitude
+        };
+        if (!isEmpty(params)) {
+          // @ts-ignore
+          this.getVenues(params as GetVenueArgs);
+        }
+      }
+    },
+    async getVenues(params: GetVenueArgs): Promise<void> {
       this.venues = [];
-      // @ts-ignore
-      this.$router.push({ path: "venues", query: params });
 
       const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
         params
@@ -202,7 +206,9 @@ export default Vue.extend({
           sortBy: this.selectedSort.queryKey,
           startIndex: this.startIndex
         };
-        this.getVenues(params);
+
+        // @ts-ignore
+        this.$router.push({ path: "venues", query: params });
       } catch (err) {
         console.error(err);
       }
@@ -225,8 +231,12 @@ export default Vue.extend({
   },
   props: {
     routerArgs: {
-      type: Object as () => Exclude<RouterArgs, "count">
+      type: Object as () => Dictionary<string | (string | null)[]>
     }
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.updateVenuesFromURL(to.query);
+    next();
   }
 });
 </script>
