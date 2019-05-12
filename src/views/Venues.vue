@@ -44,9 +44,28 @@
       </v-flex>
     </v-layout>
 
-    <div v-if="moreVenuesExist || startIndex > 0" class="listPosition">
-      <h2 class="listPositionText">{{ startIndex + 1 }} - {{ startIndex + venues.length }}</h2>
-      <v-btn class="listPositionAfter" fab dark small color="primary" v-if="moreVenuesExist">
+    <div v-if="moreVenuesExist || this.startIndex > 0" class="listPosition">
+      <v-btn
+        class="listPositionBefore"
+        fab
+        dark
+        small
+        color="primary"
+        v-if="this.startIndex > 0"
+        @click="moveBatch(-10)"
+      >
+        <v-icon dark>keyboard_arrow_left</v-icon>
+      </v-btn>
+      <h2 class="listPositionText">{{ this.startIndex + 1 }} - {{ this.startIndex + venues.length }}</h2>
+      <v-btn
+        class="listPositionAfter"
+        fab
+        dark
+        small
+        color="primary"
+        v-if="moreVenuesExist"
+        @click="moveBatch(10)"
+      >
         <v-icon dark>keyboard_arrow_right</v-icon>
       </v-btn>
     </div>
@@ -56,14 +75,13 @@
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
-import { isString, isEmpty } from "lodash";
+import { isString, isEmpty, isSafeInteger } from "lodash";
 
 import { baseUrl } from "../common";
 import { Venue, VenueResponse } from "../model/Venue";
 import { Category } from "../model/Category";
 
 import VenueComponent from "@/components/Venue.vue";
-import { Dictionary } from "vue-router/types/router";
 
 interface GetVenueArgs {
   startIndex?: number;
@@ -89,6 +107,7 @@ export default Vue.extend({
   beforeMount() {
     this.getCategories();
     this.updateVenuesFromURL(this.routerArgs);
+    this.updateDataFromProps(this.routerArgs);
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -113,9 +132,7 @@ export default Vue.extend({
     venues: [] as Venue[]
   }),
   methods: {
-    updateVenuesFromURL(
-      routerArgs: Dictionary<string | (string | null)[]>
-    ): void {
+    updateVenuesFromURL(routerArgs: GetVenueArgs): void {
       if (!isEmpty(routerArgs)) {
         const {
           startIndex,
@@ -146,8 +163,7 @@ export default Vue.extend({
           myLongitude
         };
         if (!isEmpty(params)) {
-          // @ts-ignore
-          this.getVenues(params as GetVenueArgs);
+          this.getVenues(params);
         } else {
           this.getVenues({});
         }
@@ -217,6 +233,16 @@ export default Vue.extend({
         console.error(err);
       }
     },
+    moveBatch(value: number): void {
+      // @ts-ignore
+      this.$router.push({
+        path: "venues",
+        query: {
+          ...this.routerArgs,
+          startIndex: this.startIndex + value
+        }
+      });
+    },
     getCategories() {
       axios
         .get(baseUrl + "/categories")
@@ -231,16 +257,26 @@ export default Vue.extend({
     getCurrentPosition(position: Position): void {
       this.geolocation = position;
       this.sortByOptions.push({ queryKey: "DISTANCE", name: "Distance" });
+    },
+    updateDataFromProps({
+      startIndex
+    }: GetVenueArgs | { [key: string]: string }): void {
+      if (isSafeInteger(startIndex)) {
+        this.startIndex = startIndex as number;
+      } else {
+        this.startIndex = Number.parseInt(startIndex as string) || 0;
+      }
     }
   },
   props: {
     routerArgs: {
-      type: Object as () => Dictionary<string | (string | null)[]>
+      type: Object as () => GetVenueArgs
     }
   },
   beforeRouteUpdate(to, from, next) {
     if (to.path === "/venues" && isEmpty(to.params)) {
       this.updateVenuesFromURL(to.query);
+      this.updateDataFromProps(to.query as GetVenueArgs);
     }
     next();
   }
