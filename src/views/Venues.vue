@@ -4,13 +4,30 @@
       <v-text-field class="mr-4" label="Name" v-model="name"></v-text-field>
       <v-text-field class="mr-4" label="City" v-model="city"></v-text-field>
       <v-select
+        class="mr-4"
         :items="categories"
         item-text="categoryName"
         label="Category"
         v-model="category"
         return-object
       ></v-select>
-      <v-btn color="info" @click="submit">Search</v-btn>
+      <v-select
+        class="mr-4"
+        :items="sortByOptions"
+        item-text="name"
+        label="Sort by"
+        v-model="selectedSort"
+        return-object
+      ></v-select>
+      <v-btn-toggle @change="change" mandatory class="mt36">
+        <v-btn flat>
+          <v-icon>keyboard_arrow_down</v-icon>
+        </v-btn>
+        <v-btn flat>
+          <v-icon>keyboard_arrow_up</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+      <v-btn color="info" @click="submit" class="mt36">Search</v-btn>
     </v-layout>
 
     <v-layout align-start justify-center row fill-height>
@@ -40,24 +57,46 @@ import { Category } from "../model/Category";
 
 import VenueComponent from "@/components/Venue.vue";
 
+const sortByOptions = [
+  { queryKey: "STAR_RATING", name: "Mean star rating" },
+  { queryKey: "COST_RATING", name: "Mode cost rating" }
+];
+
 export default Vue.extend({
   components: { Venue: VenueComponent },
   data: () => ({
     city: "",
     name: "",
     venues: [] as Venue[],
-    category: {} as Category | undefined,
-    categories: {} as Category[]
+    category: {} as Category,
+    categories: [] as Category[],
+    sortByOptions,
+    selectedSort: sortByOptions[0],
+    desc: true
   }),
   methods: {
     async submit(): Promise<void> {
       try {
+        let reverseSort = false;
+        switch (this.selectedSort.queryKey) {
+          case "STAR_RATING":
+            reverseSort = this.desc ? true : false;
+            break;
+          case "COST_RATING":
+            reverseSort = this.desc ? false : true;
+            break;
+          default:
+            break;
+        }
+
         this.venues = [];
         const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
           params: {
             city: this.city || undefined,
             q: this.name || undefined,
-            categoryId: this.category ? this.category.categoryId : undefined
+            categoryId: this.category ? this.category.categoryId : undefined,
+            sortBy: this.selectedSort.queryKey,
+            reverseSort
           }
         })).data;
 
@@ -81,6 +120,9 @@ export default Vue.extend({
           this.categories = res.data;
         })
         .catch(err => console.error(err));
+    },
+    change() {
+      this.desc = !this.desc;
     }
   },
   beforeMount() {
@@ -88,3 +130,10 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style>
+/* Margin top when height is 36px */
+.mt36 {
+  margin-top: 8px;
+}
+</style>

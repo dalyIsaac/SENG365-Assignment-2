@@ -60,7 +60,7 @@ export default {
       type: Object as () => Venue
     },
     categories: {
-      type: Object as () => Category[]
+      type: Array as () => Category[]
     }
   },
   methods: { round }
