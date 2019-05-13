@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "./views/Home.vue";
 
 Vue.use(Router);
 
@@ -11,9 +10,11 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      component: Home
+      component: () =>
+        import(/* webpackChunkName: "about" */ "./views/Home.vue")
     },
     {
+      name: "allVenues",
       path: "/venues",
       component: () =>
         import(/* webpackChunkName: "about" */ "./views/Venues.vue"),
@@ -21,6 +22,13 @@ export default new Router({
         const { count, ...routerArgs } = query;
         return { routerArgs };
       }
+    },
+    {
+      name: "individualVenue",
+      path: "/venues/:id",
+      component: () =>
+        import(/* webpackChunkName: "about" */ "./views/Venue.vue"),
+      props: ({ params }) => ({ params })
     }
   ]
 });

@@ -42,8 +42,7 @@
       </div>
 
       <v-card-actions>
-        <v-btn flat color="orange">Share</v-btn>
-        <v-btn flat color="orange">Explore</v-btn>
+        <v-btn flat color="orange" @click="routeTo">Explore</v-btn>
       </v-card-actions>
     </v-card>
   </v-flex>
@@ -53,6 +52,7 @@
 import { round } from "lodash";
 import { Venue } from "../model/Venue";
 import { Category } from "@/model/Category";
+import { Dictionary } from "vue-router/types/router";
 
 export default {
   props: {
@@ -63,7 +63,16 @@ export default {
       type: Array as () => Category[]
     }
   },
-  methods: { round }
+  methods: {
+    round,
+    routeTo() {
+      this.$router.push({
+        name: "individualVenue",
+        params: { id: this.venue.venueId.toString() } as Dictionary<string>
+      });
+      // this.$router.push(`/venues/${this.venue.venueId}`);
+    }
+  }
 };
 </script>
 
