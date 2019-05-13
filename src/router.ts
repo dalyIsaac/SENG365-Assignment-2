@@ -10,14 +10,13 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Home.vue")
+      component: () => import(/* webpackChunkName: "home" */ "./views/Home.vue")
     },
     {
       name: "allVenues",
       path: "/venues",
       component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Venues.vue"),
+        import(/* webpackChunkName: "venues" */ "./views/Venues.vue"),
       props: ({ query }) => {
         const { count, ...routerArgs } = query;
         return { routerArgs };
@@ -27,8 +26,18 @@ export default new Router({
       name: "individualVenue",
       path: "/venues/:id",
       component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Venue.vue"),
-      props: ({ params }) => ({ params })
+        import(/* webpackChunkName: "venue" */ "./views/Venue.vue"),
+      props: ({ params }) => ({ id: params.id })
+    },
+    {
+      name: "Invalid",
+      path: "/Invalid",
+      component: () =>
+        import(/* webpackChunkName: "Invalid") */ "./views/Invalid.vue")
+    },
+    {
+      path: "*",
+      redirect: "/Invalid"
     }
   ]
 });
