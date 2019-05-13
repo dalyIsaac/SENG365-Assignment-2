@@ -21,7 +21,7 @@
         v-model="selectedSort"
         return-object
       ></v-select>
-      <v-btn-toggle v-model="descNumber" mandatory class="mr-4 mt-3">
+      <v-btn-toggle v-model="desc" mandatory class="mr-4 mt-3">
         <v-tooltip bottom>
           <v-btn flat slot="activator">
             <v-icon>keyboard_arrow_down</v-icon>
@@ -41,11 +41,26 @@
         hint="Minimum star rating"
         min="0"
         max="5"
+        :tick-labels="[0, 1, 2, 3, 4, 5]"
         thumb-label
         persistent-hint
         ticks="always"
         tick-size="3"
         class="mr-4"
+      ></v-slider>
+      <v-slider
+        v-model="maxCostRating"
+        always-dirty
+        hint="Maximum cost rating"
+        min="0"
+        max="4"
+        thumb-label
+        persistent-hint
+        ticks="always"
+        :tick-labels="['Free', '$', '$$', '$$$', '$$$$']"
+        tick-size="3"
+        class="mr-4"
+        v-bind:style="{width: '300px'}"
       ></v-slider>
       <v-btn color="info" @click="submit" class="mt36">Search</v-btn>
     </v-layout>
@@ -163,6 +178,7 @@ export default Vue.extend({
     city: "",
     desc: 0,
     geolocation: null as Position | null,
+    maxCostRating: 4,
     minStarRating: 1,
     moreVenuesExist: false,
     name: "",
@@ -192,6 +208,9 @@ export default Vue.extend({
     },
     async getVenues(params: GetVenueArgs): Promise<void> {
       this.venues = [];
+      if (toSafeInteger(params.minStarRating) === 0) {
+        params.minStarRating = undefined;
+      }
 
       const venues: VenueResponse[] = (await axios.get(baseUrl + "/venues", {
         params
@@ -249,6 +268,7 @@ export default Vue.extend({
             this.categoryId !== undefined ? this.categoryId : undefined,
           city: this.city || undefined,
           count: 11,
+          maxCostRating: this.maxCostRating,
           minStarRating: this.minStarRating,
           myLatitude: latitude,
           myLongitude: longitude,
@@ -305,9 +325,9 @@ export default Vue.extend({
 
       this.minStarRating =
         minStarRating !== undefined ? toSafeInteger(minStarRating) : 0;
+      this.maxCostRating =
+        maxCostRating !== undefined ? toSafeInteger(maxCostRating) : 4;
 
-      // TODO: minStarRating
-      // TODO: maxCostRating
       // TODO: adminId
     },
     updateSelectedCategory(e?: Category): void {
