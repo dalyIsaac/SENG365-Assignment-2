@@ -21,7 +21,7 @@
         v-model="selectedSort"
         return-object
       ></v-select>
-      <v-btn-toggle v-model="descNumber" @change="updateSortDir" mandatory class="mt36">
+      <v-btn-toggle v-model="descNumber" mandatory class="mt36">
         <v-btn flat>
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
@@ -75,15 +75,15 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import axios from "axios";
 import { isString, isEmpty, isSafeInteger, toSafeInteger } from "lodash";
-
-import { baseUrl } from "../common";
-import { Venue, VenueResponse } from "../model/Venue";
-import { Category } from "../model/Category";
+import Vue from "vue";
+import { Route } from "vue-router";
 
 import VenueComponent from "@/components/Venue.vue";
+import { baseUrl } from "../common";
+import { Category } from "../model/Category";
+import { Venue, VenueResponse } from "../model/Venue";
 
 interface GetVenueArgs {
   startIndex?: number;
@@ -106,7 +106,14 @@ const sortByOptions = [
 ];
 
 export default Vue.extend({
-  beforeMount() {
+  /**
+   * Vue hook which triggers before mounting this component.
+   * Gets all the categories from the database.
+   * Gets all the venues, given the URL arguments.
+   * Updates the user controls, given the URL arguments.
+   * Tries to get the distance.
+   */
+  beforeMount(): void {
     this.getCategories();
     this.updateVenuesFromURL(this.routerArgs);
     this.updateDataFromProps(this.routerArgs);
@@ -119,64 +126,50 @@ export default Vue.extend({
       );
     }
   },
+  /**
+   * Vue hook which triggeres before the route has updated.
+   * Gets all the venues, given the URL arguments.
+   * Updates the user controls, given the URL arguments.
+   */
+  beforeRouteUpdate(to: Route, from: Route, next: () => void) {
+    if (to.path === "/venues" && isEmpty(to.params)) {
+      this.updateVenuesFromURL(to.query);
+      this.updateDataFromProps(to.query as GetVenueArgs);
+    }
+    next();
+  },
   components: { Venue: VenueComponent },
   data: () => ({
     categories: [] as Category[],
     categoryId: undefined as number | undefined,
     city: "",
-    desc: true,
+    desc: 0,
     geolocation: null as Position | null,
+    moreVenuesExist: false,
     name: "",
+    selectedCategory: {} as Category,
     selectedSort: sortByOptions[0],
     sortByOptions,
     startIndex: 0,
-    moreVenuesExist: false,
-    venues: [] as Venue[],
-    /**
-     * Only used when populating based on the URL
-     */
-    selectedCategory: {} as Category,
-    descNumber: 0
+    venues: [] as Venue[]
   }),
   methods: {
-    updateVenuesFromURL(routerArgs: GetVenueArgs): void {
-      if (!isEmpty(routerArgs)) {
-        const {
-          startIndex,
-          city,
-          q,
-          categoryId,
-          minStarRating,
-          maxCostRating,
-          adminId,
-          sortBy,
-          reverseSort,
-          myLatitude,
-          myLongitude
-        } = routerArgs;
-
-        const params = {
-          startIndex,
-          count: 11,
-          city,
-          q,
-          categoryId,
-          minStarRating,
-          maxCostRating,
-          adminId,
-          sortBy,
-          reverseSort,
-          myLatitude,
-          myLongitude
-        };
-        if (!isEmpty(params)) {
-          this.getVenues(params);
-        } else {
-          this.getVenues({});
-        }
-      } else {
-        this.getVenues({});
-      }
+    getCategories(): void {
+      axios
+        .get(baseUrl + "/categories")
+        .then(res => {
+          this.categories = res.data;
+          if (this.categoryId !== undefined) {
+            this.selectedCategory = this.categories[this.categoryId - 1];
+          } else {
+            this.selectedCategory = {} as Category;
+          }
+        })
+        .catch(err => console.error(err));
+    },
+    getCurrentPosition(position: Position): void {
+      this.geolocation = position;
+      this.sortByOptions.push({ queryKey: "DISTANCE", name: "Distance" });
     },
     async getVenues(params: GetVenueArgs): Promise<void> {
       this.venues = [];
@@ -200,6 +193,16 @@ export default Vue.extend({
           }/photos/${primaryPhoto}`;
         }
         this.venues.push(currentVenue);
+      });
+    },
+    moveBatch(value: number): void {
+      // @ts-ignore
+      this.$router.push({
+        path: "venues",
+        query: {
+          ...this.routerArgs,
+          startIndex: this.startIndex + value
+        }
       });
     },
     async submit(): Promise<void> {
@@ -241,36 +244,6 @@ export default Vue.extend({
         console.error(err);
       }
     },
-    moveBatch(value: number): void {
-      // @ts-ignore
-      this.$router.push({
-        path: "venues",
-        query: {
-          ...this.routerArgs,
-          startIndex: this.startIndex + value
-        }
-      });
-    },
-    getCategories() {
-      axios
-        .get(baseUrl + "/categories")
-        .then(res => {
-          this.categories = res.data;
-          if (this.categoryId !== undefined) {
-            this.selectedCategory = this.categories[this.categoryId - 1];
-          } else {
-            this.selectedCategory = {} as Category;
-          }
-        })
-        .catch(err => console.error(err));
-    },
-    updateSortDir() {
-      this.desc = !this.desc;
-    },
-    getCurrentPosition(position: Position): void {
-      this.geolocation = position;
-      this.sortByOptions.push({ queryKey: "DISTANCE", name: "Distance" });
-    },
     updateDataFromProps({
       startIndex,
       city,
@@ -298,18 +271,17 @@ export default Vue.extend({
           this.sortByOptions.find(el => el.queryKey === sortBy) ||
           this.sortByOptions[0];
         if (this.selectedSort.queryKey === "STAR_RATING") {
-          this.desc = Boolean(reverseSort) ? true : false;
+          this.desc = Boolean(reverseSort) ? 0 : 1;
         } else if (
           this.selectedSort.queryKey === "COST_RATING" ||
           this.selectedSort.queryKey === "DISTANCE"
         ) {
-          this.desc = Boolean(reverseSort) ? false : true;
+          this.desc = Boolean(reverseSort) ? 1 : 0;
         }
       } else {
         this.selectedSort = this.sortByOptions[0];
-        this.desc = true;
+        this.desc = 1;
       }
-      this.descNumber = this.desc ? 0 : 1;
 
       // TODO: minStarRating
       // TODO: maxCostRating
@@ -317,19 +289,51 @@ export default Vue.extend({
     },
     updateSelectedCategory(e?: Category): void {
       this.categoryId = e ? e.categoryId : undefined;
+    },
+    updateVenuesFromURL(routerArgs: GetVenueArgs): void {
+      if (!isEmpty(routerArgs)) {
+        const {
+          startIndex,
+          city,
+          q,
+          categoryId,
+          minStarRating,
+          maxCostRating,
+          adminId,
+          sortBy,
+          reverseSort,
+          myLatitude,
+          myLongitude
+        } = routerArgs;
+
+        const params = {
+          startIndex,
+          count: 11,
+          city,
+          q,
+          categoryId,
+          minStarRating,
+          maxCostRating,
+          adminId,
+          sortBy,
+          reverseSort,
+          myLatitude,
+          myLongitude
+        };
+        if (!isEmpty(params)) {
+          this.getVenues(params);
+        } else {
+          this.getVenues({});
+        }
+      } else {
+        this.getVenues({});
+      }
     }
   },
   props: {
     routerArgs: {
       type: Object as () => GetVenueArgs
     }
-  },
-  beforeRouteUpdate(to, from, next) {
-    if (to.path === "/venues" && isEmpty(to.params)) {
-      this.updateVenuesFromURL(to.query);
-      this.updateDataFromProps(to.query as GetVenueArgs);
-    }
-    next();
   }
 });
 </script>
