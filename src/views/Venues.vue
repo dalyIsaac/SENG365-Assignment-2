@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-layout align-start justify-start row>
+    <v-layout align-start justify-start row wrap>
       <v-text-field class="mr-4" label="Name" v-model="name"></v-text-field>
       <v-text-field class="mr-4" label="City" v-model="city"></v-text-field>
       <v-select
@@ -21,7 +21,7 @@
         v-model="selectedSort"
         return-object
       ></v-select>
-      <v-btn-toggle v-model="descNumber" mandatory class="mt36">
+      <v-btn-toggle v-model="descNumber" mandatory class="mr-4 mt-3">
         <v-tooltip bottom>
           <v-btn flat slot="activator">
             <v-icon>keyboard_arrow_down</v-icon>
@@ -35,6 +35,18 @@
           <span>Ascending</span>
         </v-tooltip>
       </v-btn-toggle>
+      <v-slider
+        v-model="minStarRating"
+        always-dirty
+        hint="Minimum star rating"
+        min="0"
+        max="5"
+        thumb-label
+        persistent-hint
+        ticks="always"
+        tick-size="3"
+        class="mr-4"
+      ></v-slider>
       <v-btn color="info" @click="submit" class="mt36">Search</v-btn>
     </v-layout>
 
@@ -151,6 +163,7 @@ export default Vue.extend({
     city: "",
     desc: 0,
     geolocation: null as Position | null,
+    minStarRating: 1,
     moreVenuesExist: false,
     name: "",
     selectedCategory: {} as Category,
@@ -236,6 +249,7 @@ export default Vue.extend({
             this.categoryId !== undefined ? this.categoryId : undefined,
           city: this.city || undefined,
           count: 11,
+          minStarRating: this.minStarRating,
           myLatitude: latitude,
           myLongitude: longitude,
           q: this.name || undefined,
@@ -288,6 +302,9 @@ export default Vue.extend({
         this.selectedSort = this.sortByOptions[0];
         this.desc = 1;
       }
+
+      this.minStarRating =
+        minStarRating !== undefined ? toSafeInteger(minStarRating) : 0;
 
       // TODO: minStarRating
       // TODO: maxCostRating
