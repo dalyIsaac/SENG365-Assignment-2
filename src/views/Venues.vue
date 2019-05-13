@@ -21,7 +21,7 @@
         v-model="selectedSort"
         return-object
       ></v-select>
-      <v-btn-toggle @change="updateSortDir" mandatory class="mt36">
+      <v-btn-toggle v-model="descNumber" @change="updateSortDir" mandatory class="mt36">
         <v-btn flat>
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
@@ -130,12 +130,13 @@ export default Vue.extend({
     selectedSort: sortByOptions[0],
     sortByOptions,
     startIndex: 0,
+    moreVenuesExist: false,
+    venues: [] as Venue[],
     /**
      * Only used when populating based on the URL
      */
     selectedCategory: {} as Category,
-    moreVenuesExist: false,
-    venues: [] as Venue[]
+    descNumber: 0
   }),
   methods: {
     updateVenuesFromURL(routerArgs: GetVenueArgs): void {
@@ -292,8 +293,23 @@ export default Vue.extend({
         this.selectedCategory = {} as Category;
       }
 
-      // TODO: sortBy
-      // TODO: reverseSort
+      if (sortBy !== undefined) {
+        this.selectedSort =
+          this.sortByOptions.find(el => el.queryKey === sortBy) ||
+          this.sortByOptions[0];
+        if (this.selectedSort.queryKey === "STAR_RATING") {
+          this.desc = Boolean(reverseSort) ? true : false;
+        } else if (
+          this.selectedSort.queryKey === "COST_RATING" ||
+          this.selectedSort.queryKey === "DISTANCE"
+        ) {
+          this.desc = Boolean(reverseSort) ? false : true;
+        }
+      } else {
+        this.selectedSort = this.sortByOptions[0];
+        this.desc = true;
+      }
+      this.descNumber = this.desc ? 0 : 1;
 
       // TODO: minStarRating
       // TODO: maxCostRating
