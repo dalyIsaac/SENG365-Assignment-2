@@ -22,12 +22,18 @@
         return-object
       ></v-select>
       <v-btn-toggle v-model="descNumber" mandatory class="mt36">
-        <v-btn flat>
-          <v-icon>keyboard_arrow_down</v-icon>
-        </v-btn>
-        <v-btn flat>
-          <v-icon>keyboard_arrow_up</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <v-btn flat slot="activator">
+            <v-icon>keyboard_arrow_down</v-icon>
+          </v-btn>
+          <span>Descending</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <v-btn flat slot="activator">
+            <v-icon>keyboard_arrow_up</v-icon>
+          </v-btn>
+          <span>Ascending</span>
+        </v-tooltip>
       </v-btn-toggle>
       <v-btn color="info" @click="submit" class="mt36">Search</v-btn>
     </v-layout>
