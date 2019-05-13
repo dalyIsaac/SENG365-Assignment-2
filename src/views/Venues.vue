@@ -8,8 +8,9 @@
         :items="categories"
         item-text="categoryName"
         label="Category"
-        clearable="true"
+        :clearable="true"
         return-object
+        v-model="selectedCategory"
         v-on:change="updateSelectedCategory"
       ></v-select>
       <v-select
@@ -76,7 +77,7 @@
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
-import { isString, isEmpty, isSafeInteger } from "lodash";
+import { isString, isEmpty, isSafeInteger, toSafeInteger } from "lodash";
 
 import { baseUrl } from "../common";
 import { Venue, VenueResponse } from "../model/Venue";
@@ -129,6 +130,10 @@ export default Vue.extend({
     selectedSort: sortByOptions[0],
     sortByOptions,
     startIndex: 0,
+    /**
+     * Only used when populating based on the URL
+     */
+    selectedCategory: {} as Category,
     moreVenuesExist: false,
     venues: [] as Venue[]
   }),
@@ -250,6 +255,11 @@ export default Vue.extend({
         .get(baseUrl + "/categories")
         .then(res => {
           this.categories = res.data;
+          if (this.categoryId !== undefined) {
+            this.selectedCategory = this.categories[this.categoryId - 1];
+          } else {
+            this.selectedCategory = {} as Category;
+          }
         })
         .catch(err => console.error(err));
     },
@@ -261,13 +271,33 @@ export default Vue.extend({
       this.sortByOptions.push({ queryKey: "DISTANCE", name: "Distance" });
     },
     updateDataFromProps({
-      startIndex
+      startIndex,
+      city,
+      q,
+      categoryId,
+      minStarRating,
+      maxCostRating,
+      adminId,
+      sortBy,
+      reverseSort
     }: GetVenueArgs | { [key: string]: string }): void {
-      if (isSafeInteger(startIndex)) {
-        this.startIndex = startIndex as number;
+      this.startIndex = Number.parseInt(startIndex as string) || 0;
+      this.name = q || "";
+      this.city = city || "";
+
+      if (categoryId !== undefined) {
+        this.categoryId = toSafeInteger(categoryId);
       } else {
-        this.startIndex = Number.parseInt(startIndex as string) || 0;
+        this.categoryId = undefined;
+        this.selectedCategory = {} as Category;
       }
+
+      // TODO: sortBy
+      // TODO: reverseSort
+
+      // TODO: minStarRating
+      // TODO: maxCostRating
+      // TODO: adminId
     },
     updateSelectedCategory(e?: Category): void {
       this.categoryId = e ? e.categoryId : undefined;
