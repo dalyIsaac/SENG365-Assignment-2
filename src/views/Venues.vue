@@ -65,19 +65,15 @@
       <v-btn color="info" @click="submit" class="mt36">Search</v-btn>
     </v-layout>
 
-    <v-layout align-start justify-center row fill-height>
-      <v-flex xs12 sm12>
-        <v-container grid-list-xl fluid>
-          <v-layout row wrap>
-            <v-flex v-for="venue in venues" :key="venue.venueId" xs12 sm6 md4>
-              <v-card flat tile>
-                <Venue v-bind:venue="venue" v-bind:categories="categories"/>
-              </v-card>
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-flex>
-    </v-layout>
+    <v-container grid-list-xl fluid>
+      <v-layout row wrap>
+        <v-flex v-for="venue in venues" :key="venue.venueId" xs12 sm6 md4>
+          <v-card flat tile>
+            <Venue v-bind:venue="venue" v-bind:categories="categories"/>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
 
     <div v-if="moreVenuesExist || this.startIndex > 0" class="listPosition">
       <v-btn

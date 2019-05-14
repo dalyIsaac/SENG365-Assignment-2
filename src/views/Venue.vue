@@ -12,20 +12,46 @@
           transition="fade"
         ></v-carousel-item>
       </v-carousel>
-      <p class="ma-3">{{ venue.shortDescription }}</p>
-      <p class="ma-3" v-if="showLongDescription">{{ venue.longDescription }}</p>
 
-      <v-layout align-start justify-center row fill-height class="full-width">
-        <div class="full-width">
-          <v-divider class="ma-4"/>
-        </div>
-        <v-btn fab dark small color="primary" @click="updateShowLongDescription">
-          <v-icon dark>{{ showLongDescription ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
-        </v-btn>
-        <div class="full-width">
-          <v-divider class="ma-4"/>
-        </div>
-      </v-layout>
+      <v-container grid-list-xl fluid>
+        <v-layout row wrap>
+          <v-flex xs12 sm12 md8>
+            <p class="ma-3">{{ venue.shortDescription }}</p>
+            <p class="ma-3" v-if="showLongDescription">{{ venue.longDescription }}</p>
+
+            <v-layout align-start justify-center row fill-height class="full-width">
+              <div class="full-width">
+                <v-divider class="ma-4"/>
+              </div>
+              <v-btn fab dark small color="primary" @click="updateShowLongDescription">
+                <v-icon dark>{{ showLongDescription ? "keyboard_arrow_up" : "keyboard_arrow_down" }}</v-icon>
+              </v-btn>
+              <div class="full-width">
+                <v-divider class="ma-4"/>
+              </div>
+            </v-layout>
+          </v-flex>
+
+          <v-flex xs12 sm12 md4>
+            <v-card>
+              <v-list dense>
+                <v-list-tile>
+                  <v-list-tile-content>Category:</v-list-tile-content>
+                  <v-list-tile-content class="align-end">{{ venue.category.categoryName }}</v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile>
+                  <v-list-tile-content>Mean star rating:</v-list-tile-content>
+                  <v-list-tile-content class="align-end">{{ 2 }}</v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile>
+                  <v-list-tile-content>Mode cost rating:</v-list-tile-content>
+                  <v-list-tile-content class="align-end">{{ 3 }}</v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
 
       <div class="full-width">
         <p
