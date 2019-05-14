@@ -15,7 +15,7 @@
 
       <v-container grid-list-xl fluid>
         <v-layout row wrap>
-          <v-flex xs12 sm12 md8>
+          <v-flex xs12 sm12 md7>
             <p class="ma-3">{{ venue.shortDescription }}</p>
             <p class="ma-3" v-if="showLongDescription">{{ venue.longDescription }}</p>
 
@@ -32,20 +32,44 @@
             </v-layout>
           </v-flex>
 
-          <v-flex xs12 sm12 md4>
+          <v-flex xs12 sm12 md5>
             <v-card>
-              <v-list dense>
+              <v-list>
                 <v-list-tile>
                   <v-list-tile-content>Category:</v-list-tile-content>
                   <v-list-tile-content class="align-end">{{ venue.category.categoryName }}</v-list-tile-content>
                 </v-list-tile>
+
                 <v-list-tile>
                   <v-list-tile-content>Mean star rating:</v-list-tile-content>
-                  <v-list-tile-content class="align-end">{{ 2 }}</v-list-tile-content>
+                  <v-list-tile-content class="align-end">
+                    <div class="tableRatingWrapper">
+                      <v-rating
+                        class="tableRatingStars"
+                        dense
+                        half-increments
+                        readonly
+                        v-model="meanStarRating"
+                      ></v-rating>
+                      <p class="tableRatingText">{{round(meanStarRating, 1)}} / 5</p>
+                    </div>
+                  </v-list-tile-content>
                 </v-list-tile>
+
                 <v-list-tile>
                   <v-list-tile-content>Mode cost rating:</v-list-tile-content>
-                  <v-list-tile-content class="align-end">{{ 3 }}</v-list-tile-content>
+                  <v-list-tile-content class="align-end">
+                    <div class="tableRatingWrapper">
+                      <v-rating
+                        class="tableRatingStars"
+                        dense
+                        half-increments
+                        readonly
+                        v-model="modeCostRating"
+                      ></v-rating>
+                      <p class="tableRatingText">{{round(modeCostRating, 1)}} / 5</p>
+                    </div>
+                  </v-list-tile-content>
                 </v-list-tile>
               </v-list>
             </v-card>
@@ -64,10 +88,21 @@
 
 <script lang="ts">
 import axios from "axios";
-import { isEmpty } from "lodash";
+import { isEmpty, max, round } from "lodash";
 import Vue from "vue";
 
 import { baseUrl } from "../common";
+
+interface Review {
+  reviewAuthor: {
+    userId: number;
+    username: string;
+  };
+  reviewBody: string;
+  starRating: number;
+  costRating: number;
+  timePosted: string;
+}
 
 interface Photo {
   photoFilename: string;
@@ -100,7 +135,14 @@ export default Vue.extend({
   props: {
     id: { type: String }
   },
-  data: () => ({ venue: {} as Venue, baseUrl, showLongDescription: false }),
+  data: () => ({
+    baseUrl,
+    venue: {} as Venue,
+    reviews: [] as Review[],
+    meanStarRating: 0,
+    modeCostRating: 0,
+    showLongDescription: false
+  }),
   beforeMount() {
     axios
       .get(baseUrl + "/venues/" + this.id)
@@ -111,11 +153,32 @@ export default Vue.extend({
         console.error(err);
         this.$router.push({ name: "404" });
       });
+    axios
+      .get(baseUrl + "/venues/" + this.id + "/reviews")
+      .then(res => {
+        this.reviews = res.data;
+        this.updateRatingAverages(this.reviews);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   },
   methods: {
     isEmpty,
-    updateShowLongDescription() {
+    round,
+    updateShowLongDescription(): void {
       this.showLongDescription = !this.showLongDescription;
+    },
+    updateRatingAverages(reviews: Review[]): void {
+      const costRatings = [0, 0, 0, 0, 0];
+      let totalStarRatings = 0;
+      reviews.forEach(el => {
+        totalStarRatings += el.starRating;
+        costRatings[el.costRating] += 1;
+      });
+
+      this.meanStarRating = totalStarRatings / reviews.length || 0;
+      this.modeCostRating = costRatings[max(costRatings)!];
     }
   }
 });
@@ -124,5 +187,21 @@ export default Vue.extend({
 <style>
 .full-width {
   width: 100%;
+}
+
+.tableRatingWrapper {
+  display: grid;
+  grid-template-rows: 21px auto;
+}
+
+.tableRatingStars {
+  grid-row: 1;
+}
+
+.tableRatingText {
+  grid-row: 2;
+  margin: 0;
+  padding: 0;
+  text-align: right;
 }
 </style>
