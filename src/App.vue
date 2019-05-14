@@ -27,7 +27,7 @@
 
     <v-content class="container">
       <v-container fluid fill-height>
-        <router-view></router-view>
+        <router-view @change="alert('Hello')"></router-view>
       </v-container>
     </v-content>
   </v-app>
@@ -36,21 +36,49 @@
 <script lang="ts">
 import Vue from "vue";
 
+interface MenuItem {
+  icon: string;
+  text: string;
+  route: string;
+}
+
+interface Divider {
+  divider: boolean;
+}
+
 export default Vue.extend({
+  beforeMount() {
+    this.updateItems();
+  },
+  watch: {
+    $route(to, from) {
+      this.updateItems();
+    }
+  },
   data: () => ({
     drawer: null,
-    items: [
+    loggedOutItems: [
+      { icon: "person_add", text: "Sign up", route: "/signup" },
+      { icon: "person", text: "Login", route: "/login" }
+    ],
+    loggedInItems: [{ icon: "stop", text: "Sign out", route: "/signout" }],
+    commonItems: [
       { icon: "home", text: "Home", route: "/" },
       { icon: "pin_drop", text: "Venues", route: "/venues" },
-      { divider: true },
-      { icon: "person_add", text: "Sign up", route: "/signup" },
-      { icon: "person", text: "Login", route: "/login" },
-      { icon: "settings", text: "Settings" }
-    ]
+      { divider: true }
+    ],
+    items: [] as Array<MenuItem | Divider>
   }),
   methods: {
     navigateTo(path: string): void {
       this.$router.push(path);
+    },
+    updateItems(): void {
+      if (Vue.loggedIn()) {
+        this.items = [...this.commonItems, ...this.loggedInItems];
+      } else {
+        this.items = [...this.commonItems, ...this.loggedOutItems];
+      }
     }
   },
   props: {
