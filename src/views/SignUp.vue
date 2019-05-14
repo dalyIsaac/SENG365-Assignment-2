@@ -84,7 +84,7 @@
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
-import { isBoolean } from "lodash";
+import { isBoolean, isString } from "lodash";
 import isemail from "isemail";
 import { baseUrl } from "../common";
 
@@ -153,13 +153,21 @@ export default Vue.extend({
             email: this.email,
             password: this.password
           });
+          this.$router.push("/");
           if (!result) {
-            this.error = "Sorry, we couldn't log you in";
+            this.error =
+              "Sorry, we couldn't log you in (we know this isn't helpful)";
           }
         })
         .catch(err => {
-          console.info(err);
-          this.error = err.response.statusText;
+          if (err.response) {
+            this.error = err.response.statusText;
+          } else if (isString(err)) {
+            this.error = err;
+          } else {
+            this.error = "Something bad happened (we know this isn't helpful)";
+          }
+          this.error = err.response ? err.response.statusText : err;
           this.errorSnackbar = true;
         });
     }
