@@ -138,7 +138,7 @@ export default Vue.extend({
       this.confirmPasswordError = isBoolean(status) ? [] : [status];
       return status;
     },
-    submit() {
+    async submit() {
       axios
         .post(baseUrl + "/users", {
           username: this.username,
@@ -147,10 +147,18 @@ export default Vue.extend({
           familyName: this.familyName,
           password: this.password
         })
-        .then(res => {
-          // TODO
+        .then(async res => {
+          const result = await Vue.login({
+            username: this.username,
+            email: this.email,
+            password: this.password
+          });
+          if (!result) {
+            this.error = "Sorry, we couldn't log you in";
+          }
         })
         .catch(err => {
+          console.info(err);
           this.error = err.response.statusText;
           this.errorSnackbar = true;
         });

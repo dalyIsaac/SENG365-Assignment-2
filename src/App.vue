@@ -43,7 +43,7 @@ export default Vue.extend({
       { icon: "home", text: "Home", route: "/" },
       { icon: "pin_drop", text: "Venues", route: "/venues" },
       { divider: true },
-      { icon: "person_add", text: "Login", route: "/login" },
+      { icon: "person_add", text: "Sign up", route: "/signup" },
       { icon: "settings", text: "Settings" }
     ]
   }),
