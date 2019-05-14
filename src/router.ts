@@ -30,6 +30,12 @@ export default new Router({
       props: ({ params }) => ({ id: params.id })
     },
     {
+      name: "signup",
+      path: "/signup",
+      component: () =>
+        import(/* webpackChunkName: "signup" */ "./views/SignUp.vue")
+    },
+    {
       name: "Invalid",
       path: "/Invalid",
       component: () =>
