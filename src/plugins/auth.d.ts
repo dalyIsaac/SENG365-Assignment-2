@@ -9,5 +9,6 @@ export interface LoginValues {
 declare module "vue/types/vue" {
   interface VueConstructor {
     login: ({ username, email, password }: LoginValues) => Promise<boolean>;
+    loggedIn: () => boolean;
   }
 }

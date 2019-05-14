@@ -29,6 +29,11 @@ const Auth: PluginObject<{}> = {
         return false;
       }
     };
+
+    Vue.loggedIn = (): boolean => {
+      const token = localStorage.getItem("token");
+      return token !== null;
+    };
   }
 };
 
