@@ -3,7 +3,7 @@ import Router from "vue-router";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
@@ -52,4 +52,21 @@ export default new Router({
       redirect: "/Invalid"
     }
   ]
+});
+export default router;
+
+const bannedRoutes = {
+  loggedIn: ["login", "signup"],
+  loggedOut: []
+};
+
+router.beforeEach((to, from, next) => {
+  const loggedIn = Vue.loggedIn();
+  if (loggedIn && bannedRoutes.loggedIn.indexOf(to.name!) !== -1) {
+    next("/");
+  } else if (bannedRoutes.loggedOut.indexOf(to.name!) !== -1) {
+    next("/");
+  } else {
+    next();
+  }
 });
