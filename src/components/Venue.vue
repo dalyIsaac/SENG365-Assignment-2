@@ -25,7 +25,7 @@
       <div class="ratingWrapper">
         <p class="font-weight-medium">Mean star rating</p>
         <v-rating class="ratingStars" dense half-increments readonly v-model="venue.meanStarRating"></v-rating>
-        <p class="ratingText">{{round(venue.meanStarRating, 1)}} / 5</p>
+        <p class="ratingText">{{ round(venue.meanStarRating, 1) }} / 5</p>
       </div>
 
       <div class="ratingWrapper">
@@ -38,7 +38,7 @@
           readonly
           v-model="venue.modeCostRating"
         ></v-rating>
-        <p class="ratingText">{{round(venue.modeCostRating, 1)}} / 4</p>
+        <p class="ratingText">{{ round(venue.modeCostRating, 1) }} / 4</p>
       </div>
 
       <v-card-actions>
@@ -49,12 +49,13 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import { round } from "lodash";
 import { Venue } from "../model/Venue";
 import { Category } from "@/model/Category";
 import { Dictionary } from "vue-router/types/router";
 
-export default {
+export default Vue.extend({
   props: {
     venue: {
       type: Object as () => Venue
@@ -73,7 +74,7 @@ export default {
       // this.$router.push(`/venues/${this.venue.venueId}`);
     }
   }
-};
+});
 </script>
 
 <style>

@@ -40,37 +40,17 @@
                   <v-list-tile-content class="align-end">{{ venue.category.categoryName }}</v-list-tile-content>
                 </v-list-tile>
 
-                <v-list-tile>
-                  <v-list-tile-content>Mean star rating:</v-list-tile-content>
-                  <v-list-tile-content class="align-end">
-                    <div class="tableRatingWrapper">
-                      <v-rating
-                        class="tableRatingStars"
-                        dense
-                        half-increments
-                        readonly
-                        v-model="meanStarRating"
-                      ></v-rating>
-                      <p class="tableRatingText">{{round(meanStarRating, 1)}} / 5</p>
-                    </div>
-                  </v-list-tile-content>
-                </v-list-tile>
+                <v-card-stars
+                  title="Mean star rating"
+                  :value="round(meanStarRating, 1)"
+                  :numStars="5"
+                />
 
-                <v-list-tile>
-                  <v-list-tile-content>Mode cost rating:</v-list-tile-content>
-                  <v-list-tile-content class="align-end">
-                    <div class="tableRatingWrapper">
-                      <v-rating
-                        class="tableRatingStars"
-                        dense
-                        half-increments
-                        readonly
-                        v-model="modeCostRating"
-                      ></v-rating>
-                      <p class="tableRatingText">{{round(modeCostRating, 1)}} / 5</p>
-                    </div>
-                  </v-list-tile-content>
-                </v-list-tile>
+                <v-card-stars
+                  title="Mode cost rating"
+                  :value="round(modeCostRating, 1)"
+                  :numStars="4"
+                />
               </v-list>
             </v-card>
           </v-flex>
@@ -83,6 +63,15 @@
         >Added by {{ venue.admin.username }} on {{ new Date(venue.dateAdded).toLocaleString() }} UTC</p>
       </div>
     </v-layout>
+
+    <v-layout align-center justify-start column fill-height v-if="!isEmpty(reviews)">
+      <h1>Reviews</h1>
+      <Review
+        v-for="review in reviews"
+        :review="review"
+        v-bind:key="review.userId + review.timePosted"
+      />
+    </v-layout>
   </v-container>
 </template>
 
@@ -92,17 +81,9 @@ import { isEmpty, max, round } from "lodash";
 import Vue from "vue";
 
 import { baseUrl } from "../common";
-
-interface Review {
-  reviewAuthor: {
-    userId: number;
-    username: string;
-  };
-  reviewBody: string;
-  starRating: number;
-  costRating: number;
-  timePosted: string;
-}
+import ReviewComponent from "@/components/Review.vue";
+import { Review } from "@/model/Review";
+import VCardStars from "../components/VCardStars.vue";
 
 interface Photo {
   photoFilename: string;
@@ -131,7 +112,29 @@ interface Venue {
   photos: Photo[];
 }
 
+/**
+ * Based on https://stackoverflow.com/a/11301464/5018082
+ */
+function indexOfMax(arr: number[]) {
+  if (arr.length === 0) {
+    return -1;
+  }
+
+  var max = arr[0];
+  var maxIndex = 0;
+
+  for (var i = 1; i < arr.length; i++) {
+    if (arr[i] > max) {
+      maxIndex = i;
+      max = arr[i];
+    }
+  }
+
+  return maxIndex;
+}
+
 export default Vue.extend({
+  components: { Review: ReviewComponent, "v-card-stars": VCardStars },
   props: {
     id: { type: String }
   },
@@ -178,7 +181,7 @@ export default Vue.extend({
       });
 
       this.meanStarRating = totalStarRatings / reviews.length || 0;
-      this.modeCostRating = costRatings[max(costRatings)!];
+      this.modeCostRating = costRatings[indexOfMax(costRatings)];
     }
   }
 });
@@ -189,16 +192,16 @@ export default Vue.extend({
   width: 100%;
 }
 
-.tableRatingWrapper {
+.table-rating-wrapper {
   display: grid;
   grid-template-rows: 21px auto;
 }
 
-.tableRatingStars {
+.table-rating-stars {
   grid-row: 1;
 }
 
-.tableRatingText {
+.table-rating-text {
   grid-row: 2;
   margin: 0;
   padding: 0;
