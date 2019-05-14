@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "./views/Home.vue";
 
 Vue.use(Router);
 
@@ -11,16 +10,34 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      component: Home
+      component: () => import(/* webpackChunkName: "home" */ "./views/Home.vue")
     },
     {
+      name: "allVenues",
       path: "/venues",
       component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Venues.vue"),
+        import(/* webpackChunkName: "venues" */ "./views/Venues.vue"),
       props: ({ query }) => {
         const { count, ...routerArgs } = query;
         return { routerArgs };
       }
+    },
+    {
+      name: "individualVenue",
+      path: "/venues/:id",
+      component: () =>
+        import(/* webpackChunkName: "venue" */ "./views/Venue.vue"),
+      props: ({ params }) => ({ id: params.id })
+    },
+    {
+      name: "Invalid",
+      path: "/Invalid",
+      component: () =>
+        import(/* webpackChunkName: "Invalid") */ "./views/Invalid.vue")
+    },
+    {
+      path: "*",
+      redirect: "/Invalid"
     }
   ]
 });
