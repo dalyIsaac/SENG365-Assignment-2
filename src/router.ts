@@ -30,6 +30,12 @@ export default new Router({
       props: ({ params }) => ({ id: params.id })
     },
     {
+      name: "login",
+      path: "/login",
+      component: () =>
+        import(/* webpackChunkName: "login" */ "./views/Login.vue")
+    },
+    {
       name: "Invalid",
       path: "/Invalid",
       component: () =>

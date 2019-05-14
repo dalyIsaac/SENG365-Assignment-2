@@ -43,6 +43,7 @@ export default Vue.extend({
       { icon: "home", text: "Home", route: "/" },
       { icon: "pin_drop", text: "Venues", route: "/venues" },
       { divider: true },
+      { icon: "person_add", text: "Login", route: "/login" },
       { icon: "settings", text: "Settings" }
     ]
   }),
@@ -56,10 +57,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style>
-.container {
-  /* overflow-y: auto;
-  height: 100%; */
-}
-</style>
