@@ -142,7 +142,7 @@ export default Vue.extend({
       axios
         .post(baseUrl + "/users", {
           username: this.username,
-          email: this.email,
+          email: this.email!,
           givenName: this.givenName,
           familyName: this.familyName,
           password: this.password

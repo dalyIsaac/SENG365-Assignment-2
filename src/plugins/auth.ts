@@ -2,7 +2,7 @@ import axios from "axios";
 import _Vue, { PluginObject } from "vue";
 import { isString } from "lodash";
 import { LoginValues } from "./auth.d";
-import { baseUrl } from "@/common";
+import { baseUrl } from "../common";
 
 const isDefined = (s: any) => isString(s) && s !== "";
 
