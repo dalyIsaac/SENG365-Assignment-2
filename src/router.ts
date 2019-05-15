@@ -27,8 +27,17 @@ const router = new Router({
       path: "/venues/create",
       component: () =>
         import(
-          /* webpackChunkName: "createVenue" */ "./views/Venues/CreateVenue.vue"
+          /* webpackChunkName: "createVenue" */ "./views/Venues/ModifyVenue.vue"
         )
+    },
+    {
+      name: "editVenue",
+      path: "/venues/:id/edit",
+      component: () =>
+        import(
+          /* webpackChunkName: "editVenue" */ "./views/Venues/ModifyVenue.vue"
+        ),
+      props: ({ params }) => ({ id: params.id })
     },
     {
       name: "individualVenue",
@@ -69,7 +78,7 @@ export default router;
 
 const bannedRoutes = {
   loggedIn: ["login", "signup"],
-  loggedOut: ["createVenue"]
+  loggedOut: ["createVenue", "editVenue"]
 };
 
 router.beforeEach((to, from, next) => {

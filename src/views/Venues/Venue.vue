@@ -1,5 +1,19 @@
 <template>
   <v-container>
+    <v-btn
+      v-if="!isEmpty(venue) && userId === venue.admin.userId"
+      fab
+      bottom
+      right
+      fixed
+      dark
+      large
+      class="ma-4"
+      color="primary"
+      @click="editVenue"
+    >
+      <v-icon dark>edit</v-icon>
+    </v-btn>
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
       <h3 class="mb-3 font-italic font-weight-medium">{{ venue.address }} - {{venue.city}}</h3>
@@ -144,9 +158,11 @@ export default Vue.extend({
     reviews: [] as Review[],
     meanStarRating: 0,
     modeCostRating: 0,
-    showLongDescription: false
+    showLongDescription: false,
+    userId: -1 as number | null
   }),
   beforeMount() {
+    this.userId = Vue.getUserId();
     axios
       .get(baseUrl + "/venues/" + this.id)
       .then(res => {
@@ -182,6 +198,9 @@ export default Vue.extend({
 
       this.meanStarRating = totalStarRatings / reviews.length || 0;
       this.modeCostRating = costRatings[indexOfMax(costRatings)];
+    },
+    editVenue() {
+      this.$router.push(`/venues/${this.id}/edit`);
     }
   }
 });
