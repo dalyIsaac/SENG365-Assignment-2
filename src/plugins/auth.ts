@@ -59,7 +59,7 @@ const Auth: PluginObject<{}> = {
 
       return axios.create({
         baseURL: baseUrl,
-        headers: { Authorization: token }
+        headers: { "X-Authorization": token }
       });
     };
   }
