@@ -31,6 +31,14 @@ const router = new Router({
         )
     },
     {
+      name: "editVenue",
+      path: "/venues/:id/edit",
+      component: () =>
+        import(
+          /* webpackChunkName: "editVenue" */ "./views/Venues/EditVenue.vue"
+        )
+    },
+    {
       name: "individualVenue",
       path: "/venues/:id",
       component: () =>
@@ -69,11 +77,13 @@ export default router;
 
 const bannedRoutes = {
   loggedIn: ["login", "signup"],
-  loggedOut: ["createVenue"]
+  loggedOut: ["createVenue", "editVenue"]
 };
 
 router.beforeEach((to, from, next) => {
   const loggedIn = Vue.isLoggedIn();
+  console.log({ ...to });
+  console.log({ ...from });
   if (loggedIn && bannedRoutes.loggedIn.indexOf(to.name!) !== -1) {
     next("/");
   } else if (!loggedIn && bannedRoutes.loggedOut.indexOf(to.name!) !== -1) {
