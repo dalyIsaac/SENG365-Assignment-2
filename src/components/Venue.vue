@@ -3,6 +3,7 @@
     <v-card flat tile ma-0 pa-0>
       <div style="{width: 100%; background-color: #4c8c4a; padding: 0; margin: 0;}">
         <p
+          v-if="!isEmpty(categories)"
           style="{padding: 0; margin: 0; color: white; text-align: center;}"
         >{{ categories[venue.categoryId - 1].categoryName }}</p>
       </div>
@@ -50,7 +51,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { round } from "lodash";
+import { isEmpty, round } from "lodash";
 import { Venue } from "../model/Venue";
 import { Category } from "@/model/Category";
 import { Dictionary } from "vue-router/types/router";
@@ -66,6 +67,7 @@ export default Vue.extend({
   },
   methods: {
     round,
+    isEmpty,
     routeTo() {
       this.$router.push({
         name: "individualVenue",
