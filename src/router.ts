@@ -23,6 +23,14 @@ const router = new Router({
       }
     },
     {
+      name: "createVenue",
+      path: "/venues/create",
+      component: () =>
+        import(
+          /* webpackChunkName: "createVenue" */ "./views/Venues/CreateVenue.vue"
+        )
+    },
+    {
       name: "individualVenue",
       path: "/venues/:id",
       component: () =>
@@ -46,26 +54,29 @@ const router = new Router({
       redirect: { name: "home" }
     },
     {
-      name: "Invalid",
-      path: "/Invalid",
+      name: "invalid",
+      path: "/invalid",
       component: () =>
         import(/* webpackChunkName: "Invalid") */ "./views/Invalid.vue")
     },
     {
       path: "*",
-      redirect: "/Invalid"
+      redirect: "/invalid"
     }
   ]
 });
 export default router;
 
 const bannedRoutes = {
-  loggedIn: ["login", "signup"]
+  loggedIn: ["login", "signup"],
+  loggedOut: ["createVenue"]
 };
 
 router.beforeEach((to, from, next) => {
   const loggedIn = Vue.isLoggedIn();
   if (loggedIn && bannedRoutes.loggedIn.indexOf(to.name!) !== -1) {
+    next("/");
+  } else if (!loggedIn && bannedRoutes.loggedOut.indexOf(to.name!) !== -1) {
     next("/");
   } else {
     next();

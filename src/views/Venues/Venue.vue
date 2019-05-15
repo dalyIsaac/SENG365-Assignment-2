@@ -154,7 +154,7 @@ export default Vue.extend({
       })
       .catch(err => {
         console.error(err);
-        this.$router.push({ name: "404" });
+        this.$router.push({ name: "invalid" });
       });
     axios
       .get(baseUrl + "/venues/" + this.id + "/reviews")
