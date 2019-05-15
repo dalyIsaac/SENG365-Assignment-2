@@ -42,6 +42,10 @@ const router = new Router({
         import(/* webpackChunkName: "login" */ "./views/Login.vue")
     },
     {
+      path: "/users/logout",
+      redirect: { name: "home" }
+    },
+    {
       name: "Invalid",
       path: "/Invalid",
       component: () =>

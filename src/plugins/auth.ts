@@ -45,7 +45,7 @@ const Auth: PluginObject<{}> = {
         console.log({ ...error });
       } finally {
         localStorage.removeItem(TOKEN);
-        router.push("/");
+        router.push("/users/logout");
       }
     };
 
