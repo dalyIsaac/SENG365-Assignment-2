@@ -1,7 +1,7 @@
 <template>
   <v-form v-model="valid" ref="form">
     <v-container>
-      <v-layout>
+      <v-layout align-start justify-start row wrap>
         <v-flex xs12 md4>
           <v-text-field
             v-model="venueName"
