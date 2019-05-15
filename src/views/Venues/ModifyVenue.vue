@@ -111,8 +111,14 @@ import { Category } from "@/model/Category";
 import { venueMaximums, venueRules } from "@/model/Venue";
 
 export default Vue.extend({
+  props: {
+    id: { type: String }
+  },
   beforeMount() {
     this.getCategories();
+    if (isString(this.id)) {
+      this.beforeMountEditVenue();
+    }
   },
   data: () => ({
     venueMaximums,
@@ -129,9 +135,31 @@ export default Vue.extend({
     address: "",
     latitude: "",
     longitude: "",
+    photos: [] as string[],
     venueRules
   }),
   methods: {
+    async beforeMountEditVenue() {
+      Vue.axiosAuthorized()
+        .get("/venues/" + this.id)
+        .then(res => {
+          if (Vue.getUserId() !== res.data.admin.userId) {
+            this.$router.push("/");
+            return;
+          }
+          this.venueName = res.data.venueName;
+          this.city = this.city;
+          this.shortDescription = this.shortDescription;
+          this.longDescription = this.longDescription;
+          this.latitude = this.latitude;
+          this.longitude = this.longitude;
+          this.photos = this.photos;
+        })
+        .catch(error => {
+          console.error({ ...error });
+          this.$router.push("/");
+        });
+    },
     getCategories(): void {
       Vue.axiosAuthorized()
         .get("/categories")

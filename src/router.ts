@@ -27,7 +27,7 @@ const router = new Router({
       path: "/venues/create",
       component: () =>
         import(
-          /* webpackChunkName: "createVenue" */ "./views/Venues/CreateVenue.vue"
+          /* webpackChunkName: "createVenue" */ "./views/Venues/ModifyVenue.vue"
         )
     },
     {
@@ -35,7 +35,7 @@ const router = new Router({
       path: "/venues/:id/edit",
       component: () =>
         import(
-          /* webpackChunkName: "editVenue" */ "./views/Venues/EditVenue.vue"
+          /* webpackChunkName: "editVenue" */ "./views/Venues/ModifyVenue.vue"
         ),
       props: ({ params }) => ({ id: params.id })
     },
