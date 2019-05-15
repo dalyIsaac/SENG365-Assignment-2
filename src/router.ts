@@ -56,15 +56,12 @@ const router = new Router({
 export default router;
 
 const bannedRoutes = {
-  loggedIn: ["login", "signup"],
-  loggedOut: []
+  loggedIn: ["login", "signup"]
 };
 
 router.beforeEach((to, from, next) => {
   const loggedIn = Vue.loggedIn();
   if (loggedIn && bannedRoutes.loggedIn.indexOf(to.name!) !== -1) {
-    next("/");
-  } else if (bannedRoutes.loggedOut.indexOf(to.name!) !== -1) {
     next("/");
   } else {
     next();

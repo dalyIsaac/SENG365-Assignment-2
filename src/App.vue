@@ -5,6 +5,30 @@
         <template v-for="(item, i) in items">
           <v-divider v-if="item.divider" :key="i" dark class="my-3"></v-divider>
 
+          <v-list-group
+            v-else-if="item.children"
+            :key="item.text"
+            v-model="item.model"
+            :prepend-icon="item.model ? item.icon : item['icon-alt']"
+            append-icon
+          >
+            <template v-slot:activator>
+              <v-list-tile>
+                <v-list-tile-content>
+                  <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </template>
+            <v-list-tile v-for="(child, i) in item.children" :key="i" @click="child.click">
+              <v-list-tile-action v-if="child.icon">
+                <v-icon>{{ child.icon }}</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title class="grey--text">{{ child.text }}</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list-group>
+
           <v-list-tile v-else :key="i" @click="navigateTo(item.route)">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -38,8 +62,10 @@ import Vue from "vue";
 
 interface MenuItem {
   icon: string;
+  "icon-alt"?: string;
   text: string;
-  route: string;
+  route?: string;
+  children?: MenuItem[];
 }
 
 interface Divider {
@@ -58,14 +84,22 @@ export default Vue.extend({
   data: () => ({
     drawer: null,
     loggedOutItems: [
+      { divider: true },
       { icon: "person_add", text: "Sign up", route: "/signup" },
       { icon: "person", text: "Login", route: "/login" }
     ],
-    loggedInItems: [{ icon: "stop", text: "Sign out", route: "/signout" }],
+    loggedInItems: [
+      {
+        icon: "keyboard_arrow_up",
+        "icon-alt": "keyboard_arrow_down",
+        text: "Account",
+        model: false,
+        children: [{ icon: "stop", text: "Signout", click: () => Vue.logout() }]
+      }
+    ],
     commonItems: [
       { icon: "home", text: "Home", route: "/" },
-      { icon: "pin_drop", text: "Venues", route: "/venues" },
-      { divider: true }
+      { icon: "pin_drop", text: "Venues", route: "/venues" }
     ],
     items: [] as Array<MenuItem | Divider>
   }),
