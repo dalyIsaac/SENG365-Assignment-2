@@ -31,13 +31,13 @@ const router = new Router({
     },
     {
       name: "signup",
-      path: "/signup",
+      path: "/users/signup",
       component: () =>
         import(/* webpackChunkName: "signup" */ "./views/SignUp.vue")
     },
     {
       name: "login",
-      path: "/login",
+      path: "/users/login",
       component: () =>
         import(/* webpackChunkName: "login" */ "./views/Login.vue")
     },

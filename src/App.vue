@@ -85,8 +85,8 @@ export default Vue.extend({
     drawer: null,
     loggedOutItems: [
       { divider: true },
-      { icon: "person_add", text: "Sign up", route: "/signup" },
-      { icon: "person", text: "Login", route: "/login" }
+      { icon: "person_add", text: "Sign up", route: "/users/signup" },
+      { icon: "person", text: "Login", route: "/users/login" }
     ],
     loggedInItems: [
       {
@@ -94,7 +94,9 @@ export default Vue.extend({
         "icon-alt": "keyboard_arrow_down",
         text: "Account",
         model: false,
-        children: [{ icon: "stop", text: "Signout", click: () => Vue.logout() }]
+        children: [
+          { icon: "stop", text: "Sign out", click: () => Vue.logout() }
+        ]
       }
     ],
     commonItems: [
