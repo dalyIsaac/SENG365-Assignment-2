@@ -71,7 +71,6 @@ export default Vue.extend({
         name: "individualVenue",
         params: { id: this.venue.venueId.toString() } as Dictionary<string>
       });
-      // this.$router.push(`/venues/${this.venue.venueId}`);
     }
   }
 });

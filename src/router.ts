@@ -36,7 +36,8 @@ const router = new Router({
       component: () =>
         import(
           /* webpackChunkName: "editVenue" */ "./views/Venues/EditVenue.vue"
-        )
+        ),
+      props: ({ params }) => ({ id: params.id })
     },
     {
       name: "individualVenue",
