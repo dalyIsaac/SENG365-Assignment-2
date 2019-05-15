@@ -51,7 +51,7 @@
 
     <v-content class="container">
       <v-container fluid fill-height>
-        <router-view @change="alert('Hello')"></router-view>
+          <router-view @change="alert('Hello')"></router-view>
       </v-container>
     </v-content>
   </v-app>

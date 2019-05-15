@@ -13,5 +13,6 @@ declare module "vue/types/vue" {
     isLoggedIn: () => boolean;
     logout: () => Promise<void>;
     axiosAuthorized: () => AxiosInstance;
+    getUserId: () => number | null;
   }
 }
