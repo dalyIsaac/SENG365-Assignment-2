@@ -4,7 +4,9 @@
 
 <script lang="ts">
 import Vue from "vue";
+
 import { Category } from "@/model/Category";
+import { venueMaximums, venueRules } from "@/model/Venue";
 
 export default Vue.extend({
   props: {
@@ -43,7 +45,9 @@ export default Vue.extend({
     photos: [] as string[],
     categories: [] as Category[],
     selectedCategory: {} as Category,
-    categoryId: -1
+    categoryId: -1,
+    venueMaximums,
+    venueRules
   }),
   methods: {
     getCategories(): void {

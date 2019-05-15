@@ -5,8 +5,8 @@
         <v-flex xs12 md4>
           <v-text-field
             v-model="venueName"
-            :rules="venueNameRules"
-            :counter="maximums.venueName"
+            :rules="venueRules.venueNameRules"
+            :counter="venueMaximums.venueName"
             label="Venue name"
             required
           />
@@ -19,7 +19,7 @@
             item-text="categoryName"
             label="Category"
             return-object
-            :rules="categoryNameRules"
+            :rules="venueRules.categoryNameRules"
             v-model="selectedCategory"
             v-on:change="updateSelectedCategory"
             required
@@ -29,8 +29,8 @@
         <v-flex xs12 md4>
           <v-text-field
             v-model="city"
-            :rules="cityRules"
-            :counter="maximums.city"
+            :rules="venueRules.cityRules"
+            :counter="venueMaximums.city"
             label="City"
             required
           />
@@ -39,8 +39,8 @@
         <v-flex xs12 md4>
           <v-text-field
             v-model="shortDescription"
-            :rules="shortDescriptionRules"
-            :counter="maximums.shortDescription"
+            :rules="venueRules.shortDescriptionRules"
+            :counter="venueMaximums.shortDescription"
             label="Short description"
             required
           />
@@ -50,8 +50,8 @@
           <v-container fluid grid-list-md>
             <v-textarea
               v-model="longDescription"
-              :counter="maximums.longDescription"
-              :rules="longDescriptionRules"
+              :counter="venueMaximums.longDescription"
+              :rules="venueRules.longDescriptionRules"
               label="Long description"
               required
               box
@@ -63,8 +63,8 @@
         <v-flex xs12 md4>
           <v-text-field
             v-model="address"
-            :rules="addressRules"
-            :counter="maximums.address"
+            :rules="venueRules.addressRules"
+            :counter="venueMaximums.address"
             label="Address"
             required
           />
@@ -73,8 +73,8 @@
         <v-flex xs12 md4>
           <v-text-field
             v-model="latitude"
-            :rules="longitudeRules"
-            :counter="maximums.latitude"
+            :rules="venueRules.longitudeRules"
+            :counter="venueMaximums.latitude"
             label="Latitude"
             required
           />
@@ -83,8 +83,8 @@
         <v-flex xs12 md4>
           <v-text-field
             v-model="longitude"
-            :rules="latitudeRules"
-            :counter="maximums.longitude"
+            :rules="venueRules.latitudeRules"
+            :counter="venueMaximums.longitude"
             label="Longitude"
             required
           />
@@ -105,24 +105,17 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { toNumber, isEmpty, isString } from "lodash";
+import { toNumber, isString } from "lodash";
 
 import { Category } from "@/model/Category";
-
-const maximums = {
-  venueName: 64,
-  city: 128,
-  shortDescription: 128,
-  longDescription: 2048,
-  address: 256
-};
+import { venueMaximums, venueRules } from "@/model/Venue";
 
 export default Vue.extend({
   beforeMount() {
     this.getCategories();
   },
   data: () => ({
-    maximums,
+    venueMaximums,
     valid: false,
     error: "",
     errorSnackbar: false,
@@ -136,63 +129,7 @@ export default Vue.extend({
     address: "",
     latitude: "",
     longitude: "",
-    venueNameRules: [
-      (v: string) => !!v || "The venue's name must not be empty",
-      (v: string) =>
-        v.length <= maximums.venueName ||
-        `The venue's name must be less than ${maximums.venueName} characters`
-    ],
-    categoryNameRules: [
-      (v: Category) => !isEmpty(v) || "Please select a category"
-    ],
-    cityRules: [
-      (v: string) => !!v || "The city must not be empty",
-      (v: string) =>
-        v.length <= maximums.city ||
-        `The venue's name must be less than ${maximums.city} characters`
-    ],
-    shortDescriptionRules: [
-      (v: string) => !!v || "The short description must not be empty",
-      (v: string) =>
-        v.length <= maximums.shortDescription ||
-        `The venue's name must be less than ${
-          maximums.shortDescription
-        } characters`
-    ],
-    longDescriptionRules: [
-      (v: string) => !!v || "The long description must not be empty",
-      (v: string) =>
-        v.length <= maximums.longDescription ||
-        `The venue's name must be less than ${
-          maximums.longDescription
-        } characters`
-    ],
-    addressRules: [
-      (v: string) => !!v || "The address must not be empty",
-      (v: string) =>
-        v.length <= maximums.address ||
-        `The venue's name must be less than ${maximums.address} characters`
-    ],
-    longitudeRules: [
-      (v: string) => !!v || "Coordinates cannot be empty",
-      (v: string) => {
-        const n = toNumber(v);
-        return (
-          (-180 <= n && n <= 180) ||
-          "Longitude must be a number between -180 and 180"
-        );
-      }
-    ],
-    latitudeRules: [
-      (v: string) => !!v || "Coordinates cannot be empty",
-      (v: string) => {
-        const n = toNumber(v);
-        return (
-          (-90 <= n && n <= 90) ||
-          "Latitude must be a number between -90 and 90"
-        );
-      }
-    ]
+    venueRules
   }),
   methods: {
     getCategories(): void {
