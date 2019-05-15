@@ -23,6 +23,14 @@ const router = new Router({
       }
     },
     {
+      name: "createVenue",
+      path: "/venues/create",
+      component: () =>
+        import(
+          /* webpackChunkName: "createVenue" */ "./views/Venues/CreateVenue.vue"
+        )
+    },
+    {
       name: "individualVenue",
       path: "/venues/:id",
       component: () =>
@@ -46,14 +54,14 @@ const router = new Router({
       redirect: { name: "home" }
     },
     {
-      name: "Invalid",
-      path: "/Invalid",
+      name: "invalid",
+      path: "/invalid",
       component: () =>
         import(/* webpackChunkName: "Invalid") */ "./views/Invalid.vue")
     },
     {
       path: "*",
-      redirect: "/Invalid"
+      redirect: "/invalid"
     }
   ]
 });

@@ -89,6 +89,8 @@ export default Vue.extend({
       { icon: "person", text: "Login", route: "/users/login" }
     ],
     loggedInItems: [
+      { divider: true },
+      { icon: "playlist_add", text: "Create venue", route: "/venues/create" },
       {
         icon: "keyboard_arrow_up",
         "icon-alt": "keyboard_arrow_down",
