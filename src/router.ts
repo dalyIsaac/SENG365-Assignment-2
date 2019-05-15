@@ -83,8 +83,6 @@ const bannedRoutes = {
 
 router.beforeEach((to, from, next) => {
   const loggedIn = Vue.isLoggedIn();
-  console.log({ ...to });
-  console.log({ ...from });
   if (loggedIn && bannedRoutes.loggedIn.indexOf(to.name!) !== -1) {
     next("/");
   } else if (!loggedIn && bannedRoutes.loggedOut.indexOf(to.name!) !== -1) {

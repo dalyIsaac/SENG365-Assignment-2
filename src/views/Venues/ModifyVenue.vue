@@ -105,7 +105,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { toNumber, isString } from "lodash";
+import { toNumber, isString, isEmpty } from "lodash";
 
 import { Category } from "@/model/Category";
 import { venueMaximums, venueRules } from "@/model/Venue";
@@ -116,6 +116,7 @@ export default Vue.extend({
   },
   beforeMount() {
     this.getCategories();
+    // editing a venue
     if (isString(this.id)) {
       this.beforeMountEditVenue();
     }
@@ -136,7 +137,8 @@ export default Vue.extend({
     latitude: "",
     longitude: "",
     photos: [] as string[],
-    venueRules
+    venueRules,
+    method: "post"
   }),
   methods: {
     async beforeMountEditVenue() {
@@ -148,12 +150,19 @@ export default Vue.extend({
             return;
           }
           this.venueName = res.data.venueName;
-          this.city = this.city;
-          this.shortDescription = this.shortDescription;
-          this.longDescription = this.longDescription;
-          this.latitude = this.latitude;
-          this.longitude = this.longitude;
-          this.photos = this.photos;
+          this.city = res.data.city;
+          this.shortDescription = res.data.shortDescription;
+          this.longDescription = res.data.longDescription;
+          this.address = res.data.address;
+          this.latitude = res.data.latitude;
+          this.longitude = res.data.longitude;
+          this.photos = res.data.photos;
+          this.categoryId = res.data.category.categoryId;
+          if (!isEmpty(this.categories)) {
+            this.selectedCategory = this.categories[this.categoryId! - 1];
+          }
+          // Updates HTTP method to patch if editing
+          this.method = "patch";
         })
         .catch(error => {
           console.error({ ...error });
@@ -165,6 +174,11 @@ export default Vue.extend({
         .get("/categories")
         .then(res => {
           this.categories = res.data;
+          if (this.categoryId !== undefined) {
+            this.selectedCategory = this.categories[this.categoryId - 1];
+          } else {
+            this.selectedCategory = {} as Category;
+          }
         })
         .catch(err => {
           console.error({ ...err });
@@ -175,7 +189,7 @@ export default Vue.extend({
     updateSelectedCategory(e?: Category): void {
       this.categoryId = e ? e.categoryId : undefined;
     },
-    submit() {
+    async submit() {
       const data = {
         venueName: this.venueName,
         categoryId: this.categoryId,
@@ -186,23 +200,29 @@ export default Vue.extend({
         latitude: toNumber(this.latitude),
         longitude: toNumber(this.longitude)
       };
-      Vue.axiosAuthorized()
-        .post("/venues", data)
-        .then(res => {
+
+      try {
+        // editing a venue
+        if (isString(this.id)) {
+          const url = `/venues/${this.id}`;
+          await Vue.axiosAuthorized().patch(url, data);
+          this.$router.push(url);
+        } else {
+          const res = await Vue.axiosAuthorized().post("/venues", data);
           const venueId = res.data.venueId;
           this.$router.push(`/venues/${venueId}`);
-        })
-        .catch(err => {
-          if (err.response) {
-            this.error = err.response.statusText;
-          } else if (isString(err)) {
-            this.error = err;
-          } else {
-            this.error = "Something bad happened (we know this isn't helpful)";
-          }
-          this.error = err.response ? err.response.statusText : err;
-          this.errorSnackbar = true;
-        });
+        }
+      } catch (error) {
+        if (error.response) {
+          this.error = error.response.statusText;
+        } else if (isString(error)) {
+          this.error = error;
+        } else {
+          this.error = "Something bad happened (we know this isn't helpful)";
+        }
+        this.error = error.response ? error.response.statusText : error;
+        this.errorSnackbar = true;
+      }
     }
   }
 });
