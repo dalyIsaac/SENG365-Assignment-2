@@ -7,7 +7,7 @@
             v-model="venueName"
             :rules="venueNameRules"
             :counter="maximums.venueName"
-            label="Username"
+            label="Venue name"
             required
           />
         </v-flex>
@@ -18,10 +18,11 @@
             :items="categories"
             item-text="categoryName"
             label="Category"
-            :clearable="true"
             return-object
+            :rules="categoryNameRules"
             v-model="selectedCategory"
             v-on:change="updateSelectedCategory"
+            required
           />
         </v-flex>
 
@@ -48,7 +49,7 @@
         <v-flex xs12 md4>
           <v-container fluid grid-list-md>
             <v-textarea
-              :value="longDescription"
+              v-model="longDescription"
               :counter="maximums.longDescription"
               :rules="longDescriptionRules"
               label="Long description"
@@ -104,7 +105,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { toNumber } from "lodash";
+import { toNumber, isEmpty, isString } from "lodash";
 
 import { Category } from "@/model/Category";
 
@@ -117,6 +118,9 @@ const maximums = {
 };
 
 export default Vue.extend({
+  beforeMount() {
+    this.getCategories();
+  },
   data: () => ({
     maximums,
     valid: false,
@@ -138,6 +142,9 @@ export default Vue.extend({
         v.length <= maximums.venueName ||
         `The venue's name must be less than ${maximums.venueName} characters`
     ],
+    categoryNameRules: [
+      (v: Category) => !isEmpty(v) || "Please select a category"
+    ],
     cityRules: [
       (v: string) => !!v || "The city must not be empty",
       (v: string) =>
@@ -153,7 +160,7 @@ export default Vue.extend({
         } characters`
     ],
     longDescriptionRules: [
-      (v: string) => !!v || "The city must not be empty",
+      (v: string) => !!v || "The long description must not be empty",
       (v: string) =>
         v.length <= maximums.longDescription ||
         `The venue's name must be less than ${
@@ -188,11 +195,49 @@ export default Vue.extend({
     ]
   }),
   methods: {
+    getCategories(): void {
+      Vue.axiosAuthorized()
+        .get("/categories")
+        .then(res => {
+          this.categories = res.data;
+        })
+        .catch(err => {
+          console.error({ ...err });
+          this.error = "Couldn't retrieve the categories";
+          this.errorSnackbar = true;
+        });
+    },
     updateSelectedCategory(e?: Category): void {
       this.categoryId = e ? e.categoryId : undefined;
     },
     submit() {
-      // TODO
+      const data = {
+        venueName: this.venueName,
+        categoryId: this.categoryId,
+        city: this.city,
+        shortDescription: this.shortDescription,
+        longDescription: this.longDescription,
+        address: this.address,
+        latitude: toNumber(this.latitude),
+        longitude: toNumber(this.longitude)
+      };
+      Vue.axiosAuthorized()
+        .post("/venues", data)
+        .then(res => {
+          const venueId = res.data.venueId;
+          this.$router.push(`/venues/${venueId}`);
+        })
+        .catch(err => {
+          if (err.response) {
+            this.error = err.response.statusText;
+          } else if (isString(err)) {
+            this.error = err;
+          } else {
+            this.error = "Something bad happened (we know this isn't helpful)";
+          }
+          this.error = err.response ? err.response.statusText : err;
+          this.errorSnackbar = true;
+        });
     }
   }
 });

@@ -40,7 +40,7 @@ const Auth: PluginObject<{}> = {
 
     Vue.logout = async (): Promise<void> => {
       try {
-        await Vue.axiosAuthorized()!.post("/users/logout");
+        await Vue.axiosAuthorized().post("/users/logout");
       } catch (error) {
         console.log({ ...error });
       } finally {
@@ -50,10 +50,8 @@ const Auth: PluginObject<{}> = {
     };
 
     Vue.axiosAuthorized = () => {
+      // assumes that the token is always present
       const token = localStorage.getItem(TOKEN);
-      if (token === null) {
-        return null;
-      }
 
       return axios.create({
         baseURL: baseUrl,
