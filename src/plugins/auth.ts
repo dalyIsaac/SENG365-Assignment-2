@@ -33,7 +33,7 @@ const Auth: PluginObject<{}> = {
       }
     };
 
-    Vue.loggedIn = (): boolean => {
+    Vue.isLoggedIn = (): boolean => {
       const token = localStorage.getItem(TOKEN);
       return token !== null;
     };
@@ -48,8 +48,6 @@ const Auth: PluginObject<{}> = {
         router.push("/");
       }
     };
-
-    Vue.isAuthorized = (): boolean => localStorage.getItem(TOKEN) !== null;
 
     Vue.axiosAuthorized = () => {
       const token = localStorage.getItem(TOKEN);

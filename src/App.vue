@@ -110,7 +110,7 @@ export default Vue.extend({
       this.$router.push(path);
     },
     updateItems(): void {
-      if (Vue.loggedIn()) {
+      if (Vue.isLoggedIn()) {
         this.items = [...this.commonItems, ...this.loggedInItems];
       } else {
         this.items = [...this.commonItems, ...this.loggedOutItems];
