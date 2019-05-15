@@ -59,7 +59,7 @@
 
       <div class="full-width">
         <p
-          class="font-italic text-lg-right text-md-right text-sm-center text-xs-center"
+          class="font-italic text-lg-right text-md-right text-sm-center text-xs-center mr-4"
         >Added by {{ venue.admin.username }} on {{ new Date(venue.dateAdded).toLocaleString() }} UTC</p>
       </div>
     </v-layout>

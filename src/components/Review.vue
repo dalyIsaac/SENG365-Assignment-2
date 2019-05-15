@@ -4,7 +4,7 @@
     <v-card-stars title="Star rating" :value="review.starRating" :numStars="5"/>
     <v-card-stars title="Cost rating" :value="review.costRating" :numStars="4"/>
     <p
-      class="font-italic text-lg-right text-md-right text-sm-center text-xs-center"
+      class="font-italic text-lg-right text-md-right text-sm-center text-xs-center mt-1 mr-4 mb-1"
     >Written by {{ review.reviewAuthor.username }} on {{ new Date(review.timePosted).toLocaleString() }} UTC</p>
   </v-card>
 </template>
