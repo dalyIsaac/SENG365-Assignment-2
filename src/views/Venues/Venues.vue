@@ -110,9 +110,9 @@ import Vue from "vue";
 import { Route } from "vue-router";
 
 import VenueComponent from "@/components/Venue.vue";
-import { baseUrl } from "../common";
-import { Category } from "../model/Category";
-import { Venue, VenueResponse } from "../model/Venue";
+import { baseUrl } from "@/common";
+import { Category } from "@/model/Category";
+import { Venue, VenueResponse } from "@/model/Venue";
 
 interface GetVenueArgs {
   startIndex?: number;

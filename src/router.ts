@@ -16,7 +16,7 @@ const router = new Router({
       name: "allVenues",
       path: "/venues",
       component: () =>
-        import(/* webpackChunkName: "venues" */ "./views/Venues.vue"),
+        import(/* webpackChunkName: "venues" */ "./views/Venues/Venues.vue"),
       props: ({ query }) => {
         const { count, ...routerArgs } = query;
         return { routerArgs };
@@ -26,7 +26,7 @@ const router = new Router({
       name: "individualVenue",
       path: "/venues/:id",
       component: () =>
-        import(/* webpackChunkName: "venue" */ "./views/Venue.vue"),
+        import(/* webpackChunkName: "venue" */ "./views/Venues/Venue.vue"),
       props: ({ params }) => ({ id: params.id })
     },
     {

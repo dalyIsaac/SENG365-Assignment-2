@@ -80,10 +80,10 @@ import axios from "axios";
 import { isEmpty, max, round } from "lodash";
 import Vue from "vue";
 
-import { baseUrl } from "../common";
+import { baseUrl } from "@/common";
 import ReviewComponent from "@/components/Review.vue";
 import { Review } from "@/model/Review";
-import VCardStars from "../components/VCardStars.vue";
+import VCardStars from "@/components/VCardStars.vue";
 
 interface Photo {
   photoFilename: string;
