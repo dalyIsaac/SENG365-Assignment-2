@@ -307,16 +307,16 @@ export default Vue.extend({
           this.sortByOptions.find(el => el.queryKey === sortBy) ||
           this.sortByOptions[0];
         if (this.selectedSort.queryKey === "STAR_RATING") {
-          this.desc = Boolean(reverseSort) ? 0 : 1;
+          this.desc = Boolean(reverseSort) ? 1 : 0;
         } else if (
           this.selectedSort.queryKey === "COST_RATING" ||
           this.selectedSort.queryKey === "DISTANCE"
         ) {
-          this.desc = Boolean(reverseSort) ? 1 : 0;
+          this.desc = Boolean(reverseSort) ? 0 : 1;
         }
       } else {
         this.selectedSort = this.sortByOptions[0];
-        this.desc = 1;
+        this.desc = 0;
       }
 
       this.minStarRating =
