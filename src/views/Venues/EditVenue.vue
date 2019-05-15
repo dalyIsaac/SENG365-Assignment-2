@@ -17,7 +17,7 @@ export default Vue.extend({
     Vue.axiosAuthorized()
       .get("/venues/" + this.id)
       .then(res => {
-        if (this.id !== res.data.admin.userId.toString()) {
+        if (Vue.getUserId() !== res.data.admin.userId) {
           this.$router.push("/");
           return;
         }
