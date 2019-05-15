@@ -3,7 +3,7 @@ import Router from "vue-router";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
@@ -31,9 +31,19 @@ export default new Router({
     },
     {
       name: "signup",
-      path: "/signup",
+      path: "/users/signup",
       component: () =>
         import(/* webpackChunkName: "signup" */ "./views/SignUp.vue")
+    },
+    {
+      name: "login",
+      path: "/users/login",
+      component: () =>
+        import(/* webpackChunkName: "login" */ "./views/Login.vue")
+    },
+    {
+      path: "/users/logout",
+      redirect: { name: "home" }
     },
     {
       name: "Invalid",
@@ -46,4 +56,18 @@ export default new Router({
       redirect: "/Invalid"
     }
   ]
+});
+export default router;
+
+const bannedRoutes = {
+  loggedIn: ["login", "signup"]
+};
+
+router.beforeEach((to, from, next) => {
+  const loggedIn = Vue.isLoggedIn();
+  if (loggedIn && bannedRoutes.loggedIn.indexOf(to.name!) !== -1) {
+    next("/");
+  } else {
+    next();
+  }
 });
