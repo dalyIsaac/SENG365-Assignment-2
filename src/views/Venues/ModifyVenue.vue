@@ -94,7 +94,7 @@
           <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
         </v-flex>
 
-        <venue-photo-editor v-if="this.isEditing"/>
+        <venue-photo-editor v-if="this.isEditing" v-bind:photos="photos" v-bind:venueId="this.id"/>
       </v-layout>
     </v-container>
 

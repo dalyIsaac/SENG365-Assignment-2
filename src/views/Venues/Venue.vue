@@ -100,13 +100,8 @@ import Vue from "vue";
 import { baseUrl } from "@/common";
 import ReviewComponent from "@/components/Review.vue";
 import { Review } from "@/model/Review";
+import { Photo } from "@/model/Photo";
 import VCardStars from "@/components/VCardStars.vue";
-
-interface Photo {
-  photoFilename: string;
-  photoDescription: string;
-  isPrimary: boolean;
-}
 
 interface Venue {
   venueName: string;
