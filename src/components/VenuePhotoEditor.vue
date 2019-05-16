@@ -1,26 +1,26 @@
 <template>
-  <v-layout>
-    <v-flex v-for="photo in localPhotos" v-bind:key="photo.photoFilename" xs12 sm6 md4 row wrap>
-      <v-card flat tile>
-        <v-img :src="photo.photoFilename" aspect-ratio="2.75"/>
+  <v-layout align-start justify-start column fill-height>
+    <v-layout align-start justify-start row wrap fill-height class="mt-3">
+      <v-flex v-for="photo in localPhotos" v-bind:key="photo.photoFilename" xs12 sm6 md4 row pa-2>
+        <v-card flat tile>
+          <v-img :src="photo.photoFilename" aspect-ratio="2.75"/>
 
-        <v-card-title primary-title>
-          <div>
-            <div>{{ photo.photoDescription }}</div>
-          </div>
-        </v-card-title>
+          <v-card-title primary-title>
+            <div class="photo-description">{{ photo.photoDescription }}</div>
+          </v-card-title>
 
-        <v-card-actions>
-          <v-btn color="error" @click="deletePhoto(photo)">Delete</v-btn>
-          <v-btn
-            v-if="!photo.isPrimary"
-            color="blue darken-3 white--text"
-            @click="setPrimary(photo)"
-          >Make primary</v-btn>
-          <v-btn v-if="photo.isPrimary" disabled color="blue darken-3 white--text">Primary photo</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
+          <v-card-actions>
+            <v-btn color="error" @click="deletePhoto(photo)">Delete</v-btn>
+            <v-btn
+              v-if="!photo.isPrimary"
+              color="blue darken-3 white--text"
+              @click="setPrimary(photo)"
+            >Make primary</v-btn>
+            <v-btn v-if="photo.isPrimary" disabled color="blue darken-3 white--text">Primary photo</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+    </v-layout>
 
     <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
       {{ error }}
@@ -29,7 +29,9 @@
 
     <v-dialog v-model="uploadPhotoDialog" max-width="600px">
       <template v-slot:activator="{ on }">
-        <v-btn color="primary" dark v-on="on">Upload Photo</v-btn>
+        <v-btn fab bottom right fixed dark large class="ma-4" color="primary" v-on="on">
+          <v-icon>add</v-icon>
+        </v-btn>
       </template>
       <v-card>
         <v-card-title>
@@ -212,5 +214,9 @@ export default Vue.extend({
 
 .upload-prompt {
   line-height: 150px;
+}
+
+.photo-description {
+  height: 150px;
 }
 </style>
