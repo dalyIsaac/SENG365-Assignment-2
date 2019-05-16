@@ -93,9 +93,9 @@
         <v-flex xs12 md4>
           <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
         </v-flex>
-
-        <venue-photo-editor v-if="this.isEditing" v-bind:photos="photos" v-bind:venueId="this.id"/>
       </v-layout>
+
+      <venue-photo-editor v-if="this.isEditing" v-bind:photos="photos" v-bind:venueId="this.id"/>
     </v-container>
 
     <v-snackbar :value="errorSnackbar" color="error" :timeout="0">

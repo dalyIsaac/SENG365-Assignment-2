@@ -1,21 +1,11 @@
 <template>
   <v-layout>
-    <v-flex v-for="photo in photos" v-bind:key="photo.photoFilename" xs12 sm6 md4>
+    <v-flex v-for="photo in photos" v-bind:key="photo.photoFilename" xs12 sm6 md4 row wrap>
       <v-card flat tile>
-        <div
-          v-if="photo.isPrimary"
-          class="blue darken-3"
-          style="{width: 100%; padding: 0; margin: 0;}"
-        >
-          <p
-            class="font-weight-medium"
-            style="{padding: 0; margin: 0; color: white; text-align: center;}"
-          >PRIMARY PHOTO</p>
-        </div>
         <v-img
           :src="`${baseUrl}/venues/${venueId}/photos/${photo.photoFilename}`"
           aspect-ratio="2.75"
-        ></v-img>
+        />
 
         <v-card-title primary-title>
           <div>
@@ -25,7 +15,8 @@
 
         <v-card-actions>
           <v-btn color="error">Delete</v-btn>
-          <v-btn v-if="!photo.isPrimary" color="blue darken-3">Make primary</v-btn>
+          <v-btn v-if="!photo.isPrimary" color="blue darken-3 white--text">Make primary</v-btn>
+          <v-btn v-if="photo.isPrimary" disabled color="blue darken-3 white--text">Primary photo</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -47,3 +38,18 @@ export default Vue.extend({
   })
 });
 </script>
+
+<style>
+.primary-div {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.primary-text {
+  padding: 0;
+  margin: 0;
+  color: white;
+  text-align: center;
+}
+</style>

@@ -68,9 +68,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex v-for="venue in venues" :key="venue.venueId" xs12 sm6 md4>
-          <v-card flat tile>
-            <Venue v-bind:venue="venue" v-bind:categories="categories"/>
-          </v-card>
+          <Venue v-bind:venue="venue" v-bind:categories="categories"/>
         </v-flex>
       </v-layout>
     </v-container>
