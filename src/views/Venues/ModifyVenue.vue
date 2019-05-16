@@ -1,106 +1,103 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-container>
-      <v-layout align-start justify-start row wrap>
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="venueName"
-            :rules="venueRules.venueNameRules"
-            :counter="venueMaximums.venueName"
-            label="Venue name"
-            required
-          />
-        </v-flex>
+    <v-layout align-start justify-start row wrap>
+      <v-flex xs12 md4 pa-2>
+        <v-text-field
+          v-model="venueName"
+          :rules="venueRules.venueNameRules"
+          :counter="venueMaximums.venueName"
+          label="Venue name"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-select
-            class="mr-4"
-            :items="categories"
-            item-text="categoryName"
-            label="Category"
-            return-object
-            :rules="venueRules.categoryNameRules"
-            v-model="selectedCategory"
-            v-on:change="updateSelectedCategory"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4 pa-2>
+        <v-select
+          class="mr-4"
+          :items="categories"
+          item-text="categoryName"
+          label="Category"
+          return-object
+          :rules="venueRules.categoryNameRules"
+          v-model="selectedCategory"
+          v-on:change="updateSelectedCategory"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="city"
-            :rules="venueRules.cityRules"
-            :counter="venueMaximums.city"
-            label="City"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4 pa-2>
+        <v-text-field
+          v-model="city"
+          :rules="venueRules.cityRules"
+          :counter="venueMaximums.city"
+          label="City"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="address"
-            :rules="venueRules.addressRules"
-            :counter="venueMaximums.address"
-            label="Address"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4 pa-2>
+        <v-text-field
+          v-model="address"
+          :rules="venueRules.addressRules"
+          :counter="venueMaximums.address"
+          label="Address"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="latitude"
-            :rules="venueRules.longitudeRules"
-            :counter="venueMaximums.latitude"
-            label="Latitude"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4 pa-2>
+        <v-text-field
+          v-model="latitude"
+          :rules="venueRules.longitudeRules"
+          :counter="venueMaximums.latitude"
+          label="Latitude"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="longitude"
-            :rules="venueRules.latitudeRules"
-            :counter="venueMaximums.longitude"
-            label="Longitude"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4 pa-2>
+        <v-text-field
+          v-model="longitude"
+          :rules="venueRules.latitudeRules"
+          :counter="venueMaximums.longitude"
+          label="Longitude"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12>
-          <v-textarea
-            v-model="shortDescription"
-            :counter="venueMaximums.shortDescription"
-            :rules="venueRules.shortDescriptionRules"
-            label="Short description"
-            required
-            box
-            auto-grow
-          />
-        </v-flex>
+      <v-flex xs12>
+        <v-textarea
+          v-model="shortDescription"
+          :counter="venueMaximums.shortDescription"
+          :rules="venueRules.shortDescriptionRules"
+          label="Short description"
+          required
+          box
+          auto-grow
+        />
+      </v-flex>
 
-        <v-flex xs12>
-          <v-textarea
-            v-model="longDescription"
-            :counter="venueMaximums.longDescription"
-            :rules="venueRules.longDescriptionRules"
-            label="Long description"
-            required
-            box
-            auto-grow
-          />
-        </v-flex>
+      <v-flex xs12>
+        <v-textarea
+          v-model="longDescription"
+          :counter="venueMaximums.longDescription"
+          :rules="venueRules.longDescriptionRules"
+          label="Long description"
+          required
+          box
+          auto-grow
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
-        </v-flex>
-      </v-layout>
+      <v-flex xs12 md4>
+        <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
+      </v-flex>
+    </v-layout>
 
-      <venue-photo-editor
-        v-if="this.isEditing && !isEmpty(this.photos)"
-        v-bind:photos="photos"
-        v-bind:venueId="this.id"
-      />
-    </v-container>
+    <div v-if="this.isEditing && !isEmpty(this.photos)">
+      <v-divider/>
+      <venue-photo-editor v-bind:photos="photos" v-bind:venueId="this.id"/>
+    </div>
 
     <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
       {{ error }}
