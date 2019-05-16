@@ -41,6 +41,25 @@
             v-model="newPhoto.isPrimary"
             :label="newPhoto.isPrimary ? 'Set as primary photo' : 'Don\'t set as primary photo'"
           />
+
+          <v-container>
+            <image-input v-model="avatar">
+              <div slot="activator">
+                <v-avatar size="150px" v-ripple v-if="!avatar" class="grey lighten-3 mb-3">
+                  <span>Click to add avatar</span>
+                </v-avatar>
+                <v-avatar size="150px" v-ripple v-else class="mb-3">
+                  <img :src="avatar.imageURL" alt="avatar">
+                </v-avatar>
+              </div>
+            </image-input>
+
+            <v-slide-x-transition>
+              <div v-if="avatar && saved == false">
+                <v-btn class="primary" @click="uploadImage" :loading="saving">Save Avatar</v-btn>
+              </div>
+            </v-slide-x-transition>
+          </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -54,10 +73,23 @@
 
 <script lang="ts">
 import Vue from "vue";
+
 import { Photo } from "@/model/Photo";
 import { baseUrl } from "../common";
+import ImageInput from "@/components/ImageInput.vue";
 
 export default Vue.extend({
+  components: {
+    ImageInput
+  },
+  watch: {
+    avatar: {
+      handler: function() {
+        this.saved = false;
+      },
+      deep: true
+    }
+  },
   beforeMount() {
     this.updatePhotos(this.photos);
   },
@@ -66,6 +98,10 @@ export default Vue.extend({
     venueId: { type: String }
   },
   data: () => ({
+    avatar: null,
+    saving: false,
+    saved: false,
+    image: "",
     error: "",
     errorSnackbar: false,
     localPhotos: [] as Photo[],
@@ -79,6 +115,14 @@ export default Vue.extend({
     ]
   }),
   methods: {
+    uploadImage() {
+      this.saving = true;
+      setTimeout(() => this.savedAvatar(), 1000);
+    },
+    savedAvatar() {
+      this.saving = false;
+      this.saved = true;
+    },
     async setPrimary(photo: Photo) {
       try {
         await Vue.axiosAuthorized().post(photo.photoFilename + "/setPrimary");
@@ -111,6 +155,17 @@ export default Vue.extend({
           }`
         });
       });
+    },
+    onChanged() {
+      console.log("New picture loaded");
+      if (this.$refs.pictureInput.file) {
+        this.image = this.$refs.pictureInput.file;
+      } else {
+        console.log("Old browser. No support for Filereader API");
+      }
+    },
+    onRemoved() {
+      this.image = "";
     }
   }
 });
