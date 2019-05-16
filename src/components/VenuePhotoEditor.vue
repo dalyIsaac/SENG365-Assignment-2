@@ -43,10 +43,10 @@
           />
 
           <v-container>
-            <image-input v-model="avatar">
+            <image-input v-model="newPhoto.photo">
               <div slot="activator">
                 <v-img
-                  v-if="!avatar"
+                  v-if="!newPhoto.photo"
                   v-ripple
                   max-height="150px"
                   class="full-width"
@@ -63,7 +63,7 @@
                   v-ripple
                   max-height="150px"
                   class="full-width"
-                  :src="avatar.imageURL"
+                  :src="newPhoto.photo.imageURL"
                   gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
                 >
                   <p
@@ -72,12 +72,6 @@
                 </v-img>
               </div>
             </image-input>
-
-            <v-slide-x-transition>
-              <div v-if="avatar && saved == false">
-                <v-btn class="primary" @click="uploadImage" :loading="saving">Save Avatar</v-btn>
-              </div>
-            </v-slide-x-transition>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -101,14 +95,6 @@ export default Vue.extend({
   components: {
     ImageInput
   },
-  watch: {
-    avatar: {
-      handler: function() {
-        this.saved = false;
-      },
-      deep: true
-    }
-  },
   beforeMount() {
     this.updatePhotos(this.photos);
   },
@@ -117,15 +103,12 @@ export default Vue.extend({
     venueId: { type: String }
   },
   data: () => ({
-    avatar: null,
-    saving: false,
-    saved: false,
-    image: "",
     error: "",
     errorSnackbar: false,
     localPhotos: [] as Photo[],
     uploadPhotoDialog: false,
     newPhoto: {
+      photo: null,
       isPrimary: false
     },
     descriptionRules: [
@@ -134,14 +117,6 @@ export default Vue.extend({
     ]
   }),
   methods: {
-    uploadImage() {
-      this.saving = true;
-      setTimeout(() => this.savedAvatar(), 1000);
-    },
-    savedAvatar() {
-      this.saving = false;
-      this.saved = true;
-    },
     async setPrimary(photo: Photo) {
       try {
         await Vue.axiosAuthorized().post(photo.photoFilename + "/setPrimary");
