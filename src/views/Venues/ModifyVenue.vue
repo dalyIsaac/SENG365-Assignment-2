@@ -1,7 +1,7 @@
 <template>
   <v-form v-model="valid" ref="form">
     <v-container>
-      <v-layout>
+      <v-layout align-start justify-start row wrap>
         <v-flex xs12 md4>
           <v-text-field
             v-model="venueName"
@@ -38,30 +38,6 @@
 
         <v-flex xs12 md4>
           <v-text-field
-            v-model="shortDescription"
-            :rules="venueRules.shortDescriptionRules"
-            :counter="venueMaximums.shortDescription"
-            label="Short description"
-            required
-          />
-        </v-flex>
-
-        <v-flex xs12 md4>
-          <v-container fluid grid-list-md>
-            <v-textarea
-              v-model="longDescription"
-              :counter="venueMaximums.longDescription"
-              :rules="venueRules.longDescriptionRules"
-              label="Long description"
-              required
-              box
-              auto-grow
-            ></v-textarea>
-          </v-container>
-        </v-flex>
-
-        <v-flex xs12 md4>
-          <v-text-field
             v-model="address"
             :rules="venueRules.addressRules"
             :counter="venueMaximums.address"
@@ -87,6 +63,30 @@
             :counter="venueMaximums.longitude"
             label="Longitude"
             required
+          />
+        </v-flex>
+
+        <v-flex xs12>
+          <v-textarea
+            v-model="shortDescription"
+            :counter="venueMaximums.shortDescription"
+            :rules="venueRules.shortDescriptionRules"
+            label="Short description"
+            required
+            box
+            auto-grow
+          />
+        </v-flex>
+
+        <v-flex xs12>
+          <v-textarea
+            v-model="longDescription"
+            :counter="venueMaximums.longDescription"
+            :rules="venueRules.longDescriptionRules"
+            label="Long description"
+            required
+            box
+            auto-grow
           />
         </v-flex>
 
