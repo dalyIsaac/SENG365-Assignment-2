@@ -17,7 +17,7 @@
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
       <h3 class="mb-3 font-italic font-weight-medium">{{ venue.address }} - {{venue.city}}</h3>
-      <v-carousel>
+      <v-carousel v-if="!isEmpty(venue.photos)">
         <v-carousel-item
           v-for="(item, i) in venue.photos"
           :key="i"
