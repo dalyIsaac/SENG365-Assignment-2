@@ -93,6 +93,8 @@
         <v-flex xs12 md4>
           <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
         </v-flex>
+
+        <venue-photo-editor v-if="this.isEditing"/>
       </v-layout>
     </v-container>
 
@@ -107,10 +109,14 @@
 import Vue from "vue";
 import { toNumber, isString, isEmpty } from "lodash";
 
+import VenuePhotoEditor from "@/components/VenuePhotoEditor.vue";
 import { Category } from "@/model/Category";
 import { venueMaximums, venueRules } from "@/model/Venue";
 
 export default Vue.extend({
+  components: {
+    "venue-photo-editor": VenuePhotoEditor
+  },
   props: {
     id: { type: String }
   },
@@ -118,10 +124,12 @@ export default Vue.extend({
     this.getCategories();
     // editing a venue
     if (isString(this.id)) {
+      this.isEditing = true;
       this.beforeMountEditVenue();
     }
   },
   data: () => ({
+    isEditing: false,
     venueMaximums,
     valid: false,
     error: "",
@@ -203,7 +211,7 @@ export default Vue.extend({
 
       try {
         // editing a venue
-        if (isString(this.id)) {
+        if (this.isEditing) {
           const url = `/venues/${this.id}`;
           await Vue.axiosAuthorized().patch(url, data);
           this.$router.push(url);
