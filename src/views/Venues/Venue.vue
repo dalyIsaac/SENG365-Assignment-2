@@ -200,7 +200,7 @@ export default Vue.extend({
       });
 
       this.meanStarRating = totalStarRatings / reviews.length || 0;
-      this.modeCostRating = costRatings[indexOfMax(costRatings)];
+      this.modeCostRating = indexOfMax(costRatings);
     },
     editVenue() {
       this.$router.push(`/venues/${this.id}/edit`);
