@@ -95,7 +95,11 @@
         </v-flex>
       </v-layout>
 
-      <venue-photo-editor v-if="this.isEditing" v-bind:photos="photos" v-bind:venueId="this.id"/>
+      <venue-photo-editor
+        v-if="this.isEditing && !isEmpty(this.photos)"
+        v-bind:photos="photos"
+        v-bind:venueId="this.id"
+      />
     </v-container>
 
     <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
@@ -129,6 +133,7 @@ export default Vue.extend({
     }
   },
   data: () => ({
+    isEmpty,
     isEditing: false,
     venueMaximums,
     valid: false,
