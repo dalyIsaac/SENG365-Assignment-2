@@ -258,8 +258,7 @@ export default Vue.extend({
         }
 
         const params = {
-          categoryId:
-            this.categoryId !== undefined ? this.categoryId : undefined,
+          categoryId: this.categoryId,
           city: this.city || undefined,
           count: 11,
           maxCostRating: this.maxCostRating,
