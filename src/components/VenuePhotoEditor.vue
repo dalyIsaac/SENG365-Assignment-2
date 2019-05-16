@@ -11,7 +11,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-btn color="error">Delete</v-btn>
+          <v-btn color="error" @click="deletePhoto(photo)">Delete</v-btn>
           <v-btn
             v-if="!photo.isPrimary"
             color="blue darken-3 white--text"
@@ -51,6 +51,15 @@ export default Vue.extend({
     async setPrimary(photo: Photo) {
       try {
         await Vue.axiosAuthorized().post(photo.photoFilename + "/setPrimary");
+        this.getPhotos();
+      } catch (error) {
+        this.error = error.response ? error.response.statusText : error;
+        this.errorSnackbar = true;
+      }
+    },
+    async deletePhoto(photo: Photo) {
+      try {
+        await Vue.axiosAuthorized().delete(photo.photoFilename);
         this.getPhotos();
       } catch (error) {
         this.error = error.response ? error.response.statusText : error;
