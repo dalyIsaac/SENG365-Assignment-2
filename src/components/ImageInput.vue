@@ -45,13 +45,18 @@ export default Vue.extend({
     },
     onFileChange(fieldName: string, file: FileList) {
       const { maxSize } = this;
-      let imageFile = file[0];
+      const imageFile = file[0];
       if (file.length > 0) {
-        let size = imageFile.size / maxSize / maxSize;
-        if (!imageFile.type.match("image.*")) {
+        const size = imageFile.size / maxSize / maxSize;
+        if (
+          !(
+            imageFile.type.match("image/jpeg") ||
+            imageFile.type.match("image/png")
+          )
+        ) {
           // check whether the upload is an image
           this.errorSnackbar = true;
-          this.errorText = "Please choose an image file";
+          this.errorText = "Please choose either a JPEG or PNG image file";
         } else if (size > 1) {
           // check whether the size is greater than the size limit
           this.errorSnackbar = true;
@@ -59,11 +64,9 @@ export default Vue.extend({
             "Your file is too big! Please select an image under 20MB";
         } else {
           // Append file into FormData and turn file into image URL
-          let formData = new FormData();
-          let imageURL = URL.createObjectURL(imageFile);
-          formData.append(fieldName, imageFile);
+          const imageURL = URL.createObjectURL(imageFile);
           // Emit the FormData and image URL to the parent component
-          this.$emit("input", { formData, imageURL });
+          this.$emit("input", { imageFile, imageURL });
         }
       }
     }

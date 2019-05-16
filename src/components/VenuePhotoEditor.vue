@@ -36,7 +36,11 @@
           <span class="headline">Upload a photo</span>
         </v-card-title>
         <v-card-text>
-          <v-text-field label="Description"/>
+          <v-text-field
+            label="Description"
+            v-model="newPhoto.description"
+            counter="maximums.description"
+          />
           <v-switch
             v-model="newPhoto.isPrimary"
             :label="newPhoto.isPrimary ? 'Set as primary photo' : 'Don\'t set as primary photo'"
@@ -54,7 +58,7 @@
                   gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
                 >
                   <p
-                    class="white--text upload-prompt font-weight-medium text-md-center"
+                    class="white--text upload-prompt font-weight-medium text-xs-center"
                   >Click to add a venue photo</p>
                 </v-img>
 
@@ -67,7 +71,7 @@
                   gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
                 >
                   <p
-                    class="white--text upload-prompt font-weight-medium text-md-center"
+                    class="white--text upload-prompt font-weight-medium text-xs-center"
                   >Click to change the venue photo</p>
                 </v-img>
               </div>
@@ -77,7 +81,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="uploadPhotoDialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click="uploadPhotoDialog = false">Save</v-btn>
+          <v-btn v-if="newPhoto.photo" color="blue darken-1" flat @click="uploadPhoto">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -86,6 +90,10 @@
 
 <script lang="ts">
 import Vue from "vue";
+
+const maximums = {
+  description: 128
+};
 
 import { Photo } from "@/model/Photo";
 import { baseUrl } from "../common";
@@ -103,17 +111,20 @@ export default Vue.extend({
     venueId: { type: String }
   },
   data: () => ({
+    maximums,
     error: "",
     errorSnackbar: false,
     localPhotos: [] as Photo[],
     uploadPhotoDialog: false,
     newPhoto: {
-      photo: null,
-      isPrimary: false
+      photo: null as { imageFile: File; imageUrl: string } | null,
+      isPrimary: false,
+      description: ""
     },
     descriptionRules: [
       (v: string) =>
-        v.length <= 128 || "Description must be less than 128 characters"
+        v.length <= maximums.description ||
+        `Description must be less than ${maximums.description} characters`
     ]
   }),
   methods: {
@@ -149,6 +160,37 @@ export default Vue.extend({
           }`
         });
       });
+    },
+    uploadPhoto() {
+      if (
+        this.newPhoto.photo === null ||
+        this.newPhoto.photo.imageFile === null
+      ) {
+        this.error = "Please select a photo";
+        this.errorSnackbar = true;
+      }
+      const data = new FormData();
+      data.set("description", this.newPhoto.description);
+      data.set("makePrimary", String(this.newPhoto.isPrimary));
+      data.set(
+        "photo",
+        this.newPhoto.photo!.imageFile,
+        this.newPhoto.photo!.imageUrl
+      );
+
+      Vue.axiosAuthorized()
+        .post(`/venues/${this.venueId}/photos`, data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(res => {
+          this.uploadPhotoDialog = false;
+          this.newPhoto = { photo: null, isPrimary: false, description: "" };
+          this.getPhotos();
+        })
+        .catch(error => {
+          this.error = error.response ? error.response.statusText : error;
+          this.errorSnackbar = true;
+        });
     }
   }
 });
