@@ -26,6 +26,29 @@
       {{ error }}
       <v-btn dark flat @click="errorSnackbar = false">Close</v-btn>
     </v-snackbar>
+
+    <v-dialog v-model="uploadPhotoDialog" max-width="600px">
+      <template v-slot:activator="{ on }">
+        <v-btn color="primary" dark v-on="on">Upload Photo</v-btn>
+      </template>
+      <v-card>
+        <v-card-title>
+          <span class="headline">Upload a photo</span>
+        </v-card-title>
+        <v-card-text>
+          <v-text-field label="Description"/>
+          <v-switch
+            v-model="newPhoto.isPrimary"
+            :label="newPhoto.isPrimary ? 'Set as primary photo' : 'Don\'t set as primary photo'"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="uploadPhotoDialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" flat @click="uploadPhotoDialog = false">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -45,7 +68,15 @@ export default Vue.extend({
   data: () => ({
     error: "",
     errorSnackbar: false,
-    localPhotos: [] as Photo[]
+    localPhotos: [] as Photo[],
+    uploadPhotoDialog: false,
+    newPhoto: {
+      isPrimary: false
+    },
+    descriptionRules: [
+      (v: string) =>
+        v.length <= 128 || "Description must be less than 128 characters"
+    ]
   }),
   methods: {
     async setPrimary(photo: Photo) {
