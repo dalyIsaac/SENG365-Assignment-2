@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-layout align-start justify-start row wrap>
       <v-text-field class="mr-4" label="Name" v-model="name"></v-text-field>
       <v-text-field class="mr-4" label="City" v-model="city"></v-text-field>
@@ -98,7 +98,7 @@
         <v-icon dark>keyboard_arrow_right</v-icon>
       </v-btn>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script lang="ts">

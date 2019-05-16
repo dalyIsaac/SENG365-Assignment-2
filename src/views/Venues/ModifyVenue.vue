@@ -95,7 +95,7 @@
     </v-layout>
 
     <div v-if="this.isEditing && !isEmpty(this.photos)">
-      <v-divider/>
+      <v-divider class="mt-3 mb-3"/>
       <venue-photo-editor v-bind:photos="photos" v-bind:venueId="this.id"/>
     </div>
 

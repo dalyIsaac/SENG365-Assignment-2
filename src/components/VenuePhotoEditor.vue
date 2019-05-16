@@ -1,6 +1,6 @@
 <template>
   <v-layout align-start justify-start column fill-height>
-    <v-layout align-start justify-start row wrap fill-height class="mt-3">
+    <v-layout align-start justify-start row wrap fill-height>
       <v-flex v-for="photo in localPhotos" v-bind:key="photo.photoFilename" xs12 sm6 md4 row pa-2>
         <v-card flat tile>
           <v-img :src="photo.photoFilename" aspect-ratio="2.75"/>
@@ -30,7 +30,12 @@
     <v-dialog v-model="uploadPhotoDialog" max-width="600px">
       <template v-slot:activator="{ on }">
         <v-btn fab bottom right fixed dark large class="ma-4" color="primary" v-on="on">
-          <v-icon>add</v-icon>
+          <v-tooltip top>
+            <v-btn flat slot="activator">
+              <v-icon>add</v-icon>
+            </v-btn>
+            <span>Add another photo</span>
+          </v-tooltip>
         </v-btn>
       </template>
       <v-card>
