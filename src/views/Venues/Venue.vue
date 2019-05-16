@@ -29,7 +29,7 @@
 
       <v-container grid-list-xl fluid>
         <v-layout row wrap>
-          <v-flex xs12 sm12 md7>
+          <v-flex xs12 sm12 md6>
             <p class="ma-3">{{ venue.shortDescription }}</p>
             <p class="ma-3" v-if="showLongDescription">{{ venue.longDescription }}</p>
 
@@ -46,7 +46,7 @@
             </v-layout>
           </v-flex>
 
-          <v-flex xs12 sm12 md5>
+          <v-flex xs12 sm12 md6>
             <v-card>
               <v-list>
                 <v-list-tile>

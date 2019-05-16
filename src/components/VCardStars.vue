@@ -10,6 +10,7 @@
           half-increments
           readonly
           v-model="value"
+          small
         ></v-rating>
         <p class="stars-text">{{ value }} / {{ numStars }}</p>
       </div>
