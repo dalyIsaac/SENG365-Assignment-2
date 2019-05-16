@@ -6,6 +6,7 @@
     <div @click="launchFilePicker()">
       <slot name="activator"></slot>
     </div>
+
     <!-- image input: style is set to hidden and assigned a ref so that it can be triggered -->
     <input
       type="file"

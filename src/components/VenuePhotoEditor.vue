@@ -45,12 +45,31 @@
           <v-container>
             <image-input v-model="avatar">
               <div slot="activator">
-                <v-avatar size="150px" v-ripple v-if="!avatar" class="grey lighten-3 mb-3">
-                  <span>Click to add avatar</span>
-                </v-avatar>
-                <v-avatar size="150px" v-ripple v-else class="mb-3">
-                  <img :src="avatar.imageURL" alt="avatar">
-                </v-avatar>
+                <v-img
+                  v-if="!avatar"
+                  v-ripple
+                  max-height="150px"
+                  class="full-width"
+                  :src="require('@/assets/imagePlaceholder.jpg')"
+                  gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
+                >
+                  <p
+                    class="white--text upload-prompt font-weight-medium text-md-center"
+                  >Click to add a venue photo</p>
+                </v-img>
+
+                <v-img
+                  v-else
+                  v-ripple
+                  max-height="150px"
+                  class="full-width"
+                  :src="avatar.imageURL"
+                  gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
+                >
+                  <p
+                    class="white--text upload-prompt font-weight-medium text-md-center"
+                  >Click to change the venue photo</p>
+                </v-img>
               </div>
             </image-input>
 
@@ -155,17 +174,6 @@ export default Vue.extend({
           }`
         });
       });
-    },
-    onChanged() {
-      console.log("New picture loaded");
-      if (this.$refs.pictureInput.file) {
-        this.image = this.$refs.pictureInput.file;
-      } else {
-        console.log("Old browser. No support for Filereader API");
-      }
-    },
-    onRemoved() {
-      this.image = "";
     }
   }
 });
@@ -183,5 +191,9 @@ export default Vue.extend({
   margin: 0;
   color: white;
   text-align: center;
+}
+
+.upload-prompt {
+  line-height: 150px;
 }
 </style>
