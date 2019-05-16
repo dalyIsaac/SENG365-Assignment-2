@@ -30,8 +30,11 @@
       <v-container grid-list-xl fluid>
         <v-layout row wrap>
           <v-flex xs12 sm12 md6>
-            <p class="ma-3">{{ venue.shortDescription }}</p>
-            <p class="ma-3" v-if="showLongDescription">{{ venue.longDescription }}</p>
+            <p class="ma-3 subheading font-weight-regular">{{ venue.shortDescription }}</p>
+            <p
+              class="ma-3 subheading font-weight-regular"
+              v-if="showLongDescription"
+            >{{ venue.longDescription }}</p>
 
             <v-layout align-start justify-center row fill-height class="full-width">
               <div class="full-width">
