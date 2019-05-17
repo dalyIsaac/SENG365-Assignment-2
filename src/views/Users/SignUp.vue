@@ -86,7 +86,7 @@ import Vue from "vue";
 import axios from "axios";
 import { isBoolean, isString } from "lodash";
 import isemail from "isemail";
-import { baseUrl } from "../common";
+import { baseUrl } from "@/common";
 
 const maximums = {
   username: 64,

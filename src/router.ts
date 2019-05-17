@@ -50,13 +50,13 @@ const router = new Router({
       name: "signup",
       path: "/users/signup",
       component: () =>
-        import(/* webpackChunkName: "signup" */ "./views/SignUp.vue")
+        import(/* webpackChunkName: "signup" */ "./views/Users/SignUp.vue")
     },
     {
       name: "login",
       path: "/users/login",
       component: () =>
-        import(/* webpackChunkName: "login" */ "./views/Login.vue")
+        import(/* webpackChunkName: "login" */ "./views/Users/Login.vue")
     },
     {
       path: "/users/logout",
