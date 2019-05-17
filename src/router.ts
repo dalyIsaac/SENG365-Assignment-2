@@ -64,9 +64,10 @@ const router = new Router({
     },
     {
       name: "users",
-      path: "/users",
+      path: "/users/:id",
       component: () =>
-        import(/* webpackChunkName: "users" */ "./views/Users/User.vue")
+        import(/* webpackChunkName: "users" */ "./views/Users/User.vue"),
+      props: ({ params }) => ({ id: params.id })
     },
     {
       name: "invalid",

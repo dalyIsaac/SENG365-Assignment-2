@@ -1,6 +1,9 @@
 <template>
   <v-layout align-start justify-start column fill-height>
-    <h1>Hello {{ familyName }}, {{ givenName }}</h1>
+    <h1>
+      <span v-if="email">Hello</span>
+      {{ familyName }}, {{ givenName }}
+    </h1>
 
     <v-container grid-list-xl fluid>
       <v-card class="full-width">
@@ -9,37 +12,51 @@
           <p class="value">{{ username }}</p>
         </div>
 
-        <div class="tile">
-          <p class="label">Given name:</p>
-          <div class="value">
-            <v-text-field
-              v-model="givenName"
-              :rules="givenNameRules"
-              :counter="userMaximums.givenName"
-              label="Given name"
-              required
-              :disabled="!editingMode"
-            />
+        <div v-if="email">
+          <div class="tile">
+            <p class="label">Given name:</p>
+            <div class="value">
+              <v-text-field
+                v-model="givenName"
+                :rules="givenNameRules"
+                :counter="userMaximums.givenName"
+                label="Given name"
+                required
+                :disabled="!editingMode"
+              />
+            </div>
+          </div>
+
+          <div class="tile">
+            <p class="label">Family name:</p>
+            <div class="value">
+              <v-text-field
+                v-model="familyName"
+                :rules="familyNameRules"
+                :counter="userMaximums.givenName"
+                label="Family name"
+                required
+                :disabled="!editingMode"
+              />
+            </div>
+          </div>
+
+          <div class="tile">
+            <p class="label">Email:</p>
+            <p class="value">{{ email }}</p>
           </div>
         </div>
 
-        <div class="tile">
-          <p class="label">Family name:</p>
-          <div class="value">
-            <v-text-field
-              v-model="familyName"
-              :rules="familyNameRules"
-              :counter="userMaximums.givenName"
-              label="Family name"
-              required
-              :disabled="!editingMode"
-            />
+        <div v-else>
+          <div class="tile">
+            <p class="label">Given name:</p>
+            <p class="value">{{ givenName }}</p>
           </div>
-        </div>
 
-        <div class="tile">
-          <p class="label">Email:</p>
-          <p class="value">{{ email }}</p>
+          <div class="tile">
+            <p class="label">Family name:</p>
+            <p class="value">{{ familyName }}</p>
+          </div>
         </div>
       </v-card>
     </v-container>
@@ -53,12 +70,13 @@ import { familyNameRules, givenNameRules, userMaximums } from "@/model/User";
 
 export default Vue.extend({
   beforeMount() {
-    this.id = Vue.getUserId()!;
     this.getUser();
+  },
+  props: {
+    id: { type: String }
   },
   data: () => ({
     userMaximums,
-    id: -1,
     username: "",
     givenName: "",
     familyName: "",
@@ -75,6 +93,9 @@ export default Vue.extend({
           this.username = res.data.username;
           this.givenName = res.data.givenName;
           this.familyName = res.data.familyName;
+
+          // if this email is populated, then we know we're viewing ourselves,
+          // per the API spec.
           this.email = res.data.email;
         });
     }
