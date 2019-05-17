@@ -63,12 +63,13 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { isFunction } from "lodash";
 
 interface MenuItem {
   icon: string;
   "icon-alt"?: string;
   text: string;
-  route?: string;
+  route?: string | (() => string);
   children?: MenuItem[];
 }
 
@@ -101,7 +102,11 @@ export default Vue.extend({
         text: "Account",
         model: false,
         children: [
-          { icon: "account_circle", text: "View account", route: "/users" },
+          {
+            icon: "account_circle",
+            text: "View account",
+            route: () => `/users/${Vue.getUserId()}`
+          },
           { icon: "stop", text: "Sign out", click: () => Vue.logout() }
         ]
       }
@@ -113,8 +118,12 @@ export default Vue.extend({
     items: [] as Array<MenuItem | Divider>
   }),
   methods: {
-    navigateTo(path: string): void {
-      this.$router.push(path);
+    navigateTo(path: string | (() => string)): void {
+      if (isFunction(path)) {
+        this.$router.push(path());
+      } else {
+        this.$router.push(path);
+      }
     },
     updateItems(): void {
       if (Vue.isLoggedIn()) {

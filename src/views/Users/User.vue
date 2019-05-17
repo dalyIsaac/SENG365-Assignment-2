@@ -53,12 +53,13 @@ import { familyNameRules, givenNameRules, userMaximums } from "@/model/User";
 
 export default Vue.extend({
   beforeMount() {
-    this.id = Vue.getUserId()!;
     this.getUser();
+  },
+  props: {
+    id: { type: String }
   },
   data: () => ({
     userMaximums,
-    id: -1,
     username: "",
     givenName: "",
     familyName: "",
