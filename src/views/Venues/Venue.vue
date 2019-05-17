@@ -174,6 +174,9 @@ export default Vue.extend({
       .get(baseUrl + "/venues/" + this.id)
       .then(res => {
         this.venue = res.data;
+        if (this.venue && this.userId === this.venue.admin.userId) {
+          this.canReview = false;
+        }
       })
       .catch(err => {
         console.error(err);
@@ -212,7 +215,7 @@ export default Vue.extend({
         this.canReview = true;
       }
 
-      if (this.userId === this.venue.admin.userId) {
+      if (!isEmpty(this.venue) && this.userId === this.venue.admin.userId) {
         this.canReview = false;
       }
 
