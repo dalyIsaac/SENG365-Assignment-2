@@ -15,7 +15,7 @@
       <v-icon dark>edit</v-icon>
     </v-btn>
 
-    <create-review v-else-if="canReview" :venueId="id"/>
+    <create-review v-else-if="canReview" :venueId="id" v-on:updatereviews="getReviews"/>
 
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
@@ -182,21 +182,24 @@ export default Vue.extend({
         console.error(err);
         this.$router.push({ name: "invalid" });
       });
-    axios
-      .get(baseUrl + "/venues/" + this.id + "/reviews")
-      .then(res => {
-        this.reviews = res.data;
-        this.updateRatingAverages(this.reviews);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    this.getReviews();
   },
   methods: {
     isEmpty,
     round,
     updateShowLongDescription(): void {
       this.showLongDescription = !this.showLongDescription;
+    },
+    getReviews() {
+      axios
+        .get(baseUrl + "/venues/" + this.id + "/reviews")
+        .then(res => {
+          this.reviews = res.data;
+          this.updateRatingAverages(this.reviews);
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
     updateRatingAverages(reviews: Review[]): void {
       const costRatings = [0, 0, 0, 0, 0];

@@ -118,7 +118,10 @@ export default Vue.extend({
           this.error = error.response ? error.response.statusText : error;
           this.errorSnackbar = true;
         })
-        .finally(() => (this.dialog = false));
+        .finally(() => {
+          this.dialog = false;
+          this.$emit("updatereviews");
+        });
     }
   }
 });
