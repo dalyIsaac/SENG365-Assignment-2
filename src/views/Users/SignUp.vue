@@ -86,7 +86,9 @@ import Vue from "vue";
 import axios from "axios";
 import { isBoolean, isString } from "lodash";
 import isemail from "isemail";
+
 import { baseUrl } from "@/common";
+import { nameRules, passwordRules } from "@/model/User";
 
 const maximums = {
   username: 64,
@@ -114,19 +116,9 @@ export default Vue.extend({
       (v: string) =>
         v.match(/^[a-z0-9]+$/i) !== null || "Username must be alphanumeric"
     ],
-    nameRules: [
-      (v: string) => !!v || "Name is required",
-      (v: string) =>
-        v.length <= maximums.name ||
-        `Name must be less than ${maximums.name} characters`
-    ],
+    nameRules,
     emailRules: [(v: string) => isemail.validate(v) || "Invalid email"],
-    passwordRules: [
-      (v: string) => !!v || "Password is required",
-      (v: string) =>
-        v.length <= maximums.password ||
-        `Password is must be less than ${maximums.password} characters`
-    ],
+    passwordRules,
     valid: false
   }),
   methods: {
