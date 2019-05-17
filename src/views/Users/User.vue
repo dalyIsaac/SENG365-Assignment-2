@@ -76,18 +76,41 @@
 
           <v-divider/>
 
+          <div v-if="editingPassword">
+            <div class="tile">
+              <p class="subheading label">Old password:</p>
+              <div class="value">
+                <v-layout row>
+                  <!-- Empty button for alignment -->
+                  <v-btn :disabled="editingPassword" flat icon/>
+                  <v-form v-model="oldPasswordValid" class="full-width">
+                    <v-text-field
+                      v-model="oldPassword"
+                      :rules="passwordRules"
+                      :counter="userMaximums.password"
+                      label="Old password"
+                      required
+                      class="input-group--focused"
+                      type="password"
+                    />
+                  </v-form>
+                </v-layout>
+              </div>
+            </div>
+          </div>
+
           <div class="tile">
-            <p class="subheading label">Password:</p>
+            <p class="subheading label">New password:</p>
             <div class="value">
               <v-layout row>
                 <v-btn :disabled="editingPassword" flat icon color="primary" @click="editPassword">
                   <v-icon v-if="!editingPassword" class="flipped-icon">edit</v-icon>
                 </v-btn>
                 <v-text-field
-                  v-model="password"
+                  v-model="newPassword"
                   :rules="passwordRules"
                   :counter="userMaximums.password"
-                  label="Password"
+                  label="New password"
                   required
                   @input="validatePassword"
                   class="input-group--focused"
@@ -98,15 +121,13 @@
             </div>
           </div>
 
-          <v-divider/>
-
           <div class="tile" v-if="editingPassword" transition="slide-x-transition">
-            <p class="subheading label">Password:</p>
+            <p class="subheading label">Confirm new password:</p>
             <div class="value">
               <v-layout row>
                 <v-btn
                   v-if="editingPassword"
-                  :disabled="!passwordValid"
+                  :disabled="!(newPasswordValid && oldPasswordValid)"
                   flat
                   icon
                   color="primary"
@@ -114,13 +135,13 @@
                 >
                   <v-icon>save</v-icon>
                 </v-btn>
-                <v-form v-model="passwordValid">
+                <v-form v-model="newPasswordValid" class="full-width">
                   <v-text-field
-                    v-model="confirmPassword"
-                    :error-messages="confirmPasswordError"
-                    :rules="[validateConfirmPassword]"
+                    v-model="newConfirmPassword"
+                    :error-messages="newConfirmPasswordError"
+                    :rules="[...passwordRules, validateConfirmPassword]"
                     :counter="userMaximums.password"
-                    label="Confirm password"
+                    label="Confirm new password"
                     required
                     class="input-group--focused"
                     :disabled="!editingPassword"
@@ -147,6 +168,11 @@
         </div>
       </v-card>
     </v-container>
+
+    <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
+      {{ error }}
+      <v-btn dark flat @click="errorSnackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-layout>
 </template>
 
@@ -154,7 +180,7 @@
 import { isBoolean } from "lodash";
 import Vue from "vue";
 
-import { nameRules, passwordRules ,userMaximums } from "@/model/User";
+import { nameRules, passwordRules, userMaximums } from "@/model/User";
 
 export default Vue.extend({
   beforeMount() {
@@ -164,6 +190,8 @@ export default Vue.extend({
     id: { type: String }
   },
   data: () => ({
+    error: "",
+    errorSnackbar: false,
     userMaximums,
     username: "",
     givenName: "",
@@ -173,14 +201,15 @@ export default Vue.extend({
     familyNameValid: true,
     editingFamilyName: false,
     email: "",
-    password: "",
-    confirmPassword: "",
-    passwordValid: true,
+    oldPassword: "",
+    oldPasswordValid: false,
+    newPassword: "",
+    newConfirmPassword: "",
+    newPasswordValid: false,
     editingPassword: false,
     nameRules,
     passwordRules,
-    confirmPasswordRules: [],
-    confirmPasswordError: [] as Array<string | boolean>
+    newConfirmPasswordError: [] as Array<string | boolean>
   }),
   methods: {
     async getUser(props?: Array<"givenName" | "familyName">) {
@@ -223,21 +252,34 @@ export default Vue.extend({
       }
     },
     async editPassword() {
-      if (this.editingPassword && this.password) {
-        this.editingPassword = false;
-        await Vue.axiosAuthorized().patch("/users/" + this.id, {
-          password: this.password
-        });
-      } else {
-        this.editingPassword = true;
+      try {
+        if (this.editingPassword && this.newPassword) {
+          this.editingPassword = false;
+          const validOldPassword = await Vue.login({
+            username: this.username,
+            password: this.oldPassword
+          });
+          if (validOldPassword) {
+            await Vue.axiosAuthorized().patch("/users/" + this.id, {
+              password: this.newPassword
+            });
+          } else {
+            throw new Error("Invalid old password");
+          }
+        } else {
+          this.editingPassword = true;
+        }
+      } catch (error) {
+        this.error = error.response ? error.response.statusText : error;
+        this.errorSnackbar = true;
       }
     },
     validatePassword() {
-      this.validateConfirmPassword(this.confirmPassword);
+      this.validateConfirmPassword(this.newConfirmPassword);
     },
     validateConfirmPassword(v: string) {
-      const status = v === this.password || "The passwords do not match";
-      this.confirmPasswordError = isBoolean(status) ? [] : [status];
+      const status = v === this.newPassword || "The passwords do not match";
+      this.newConfirmPasswordError = isBoolean(status) ? [] : [status];
       return status;
     }
   }
@@ -272,5 +314,9 @@ export default Vue.extend({
   text-align: right;
   margin: 0;
   padding: 0;
+}
+
+.full-width {
+  width: 100%;
 }
 </style>
