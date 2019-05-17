@@ -14,6 +14,9 @@
     >
       <v-icon dark>edit</v-icon>
     </v-btn>
+
+    <create-review v-else/>
+
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
       <h3 class="mb-3 font-italic font-weight-medium">{{ venue.address }} - {{venue.city}}</h3>
@@ -102,6 +105,7 @@ import ReviewComponent from "@/components/Review.vue";
 import { Review } from "@/model/Review";
 import { Photo } from "@/model/Photo";
 import VCardStars from "@/components/VCardStars.vue";
+import CreateReview from "@/components/CreateReview.vue";
 
 interface Venue {
   venueName: string;
@@ -146,7 +150,11 @@ function indexOfMax(arr: number[]) {
 }
 
 export default Vue.extend({
-  components: { Review: ReviewComponent, "v-card-stars": VCardStars },
+  components: {
+    Review: ReviewComponent,
+    "v-card-stars": VCardStars,
+    CreateReview
+  },
   props: {
     id: { type: String }
   },
