@@ -26,19 +26,20 @@
             <p class="subheading label">Given name:</p>
             <div class="value">
               <v-layout row>
-                <v-btn flat icon color="primary" @click="editGivenName">
+                <v-btn flat :disabled="!givenNameValid" icon color="primary" @click="editGivenName">
                   <v-icon v-if="editingGivenName">save</v-icon>
                   <v-icon v-else class="flipped-icon">edit</v-icon>
                 </v-btn>
-                <v-text-field
-                  v-model="givenName"
-                  :rules="nameRules"
-                  :counter="userMaximums.name"
-                  :error-count="errorCountGivenName"
-                  label="Given name"
-                  required
-                  :disabled="!editingGivenName"
-                />
+                <v-form v-model="givenNameValid">
+                  <v-text-field
+                    v-model="givenName"
+                    :rules="nameRules"
+                    :counter="userMaximums.name"
+                    label="Given name"
+                    required
+                    :disabled="!editingGivenName"
+                  />
+                </v-form>
               </v-layout>
             </div>
           </div>
@@ -49,18 +50,26 @@
             <p class="subheading label">Family name:</p>
             <div class="value">
               <v-layout row>
-                <v-btn flat icon color="primary" @click="editFamilyName">
+                <v-btn
+                  flat
+                  :disabled="!familyNameValid"
+                  icon
+                  color="primary"
+                  @click="editFamilyName"
+                >
                   <v-icon v-if="editingFamilyName">save</v-icon>
                   <v-icon v-else class="flipped-icon">edit</v-icon>
                 </v-btn>
-                <v-text-field
-                  v-model="familyName"
-                  :rules="nameRules"
-                  :counter="userMaximums.name"
-                  label="Family name"
-                  required
-                  :disabled="!editingFamilyName"
-                />
+                <v-form v-model="familyNameValid">
+                  <v-text-field
+                    v-model="familyName"
+                    :rules="nameRules"
+                    :counter="userMaximums.name"
+                    label="Family name"
+                    required
+                    :disabled="!editingFamilyName"
+                  />
+                </v-form>
               </v-layout>
             </div>
           </div>
@@ -95,20 +104,29 @@
             <p class="subheading label">Password:</p>
             <div class="value">
               <v-layout row>
-                <v-btn v-if="editingPassword" flat icon color="primary" @click="editPassword">
+                <v-btn
+                  v-if="editingPassword"
+                  :disabled="!passwordValid"
+                  flat
+                  icon
+                  color="primary"
+                  @click="editPassword"
+                >
                   <v-icon>save</v-icon>
                 </v-btn>
-                <v-text-field
-                  v-model="confirmPassword"
-                  :error-messages="confirmPasswordError"
-                  :rules="[validateConfirmPassword]"
-                  :counter="userMaximums.password"
-                  label="Confirm password"
-                  required
-                  class="input-group--focused"
-                  :disabled="!editingPassword"
-                  type="password"
-                />
+                <v-form v-model="passwordValid">
+                  <v-text-field
+                    v-model="confirmPassword"
+                    :error-messages="confirmPasswordError"
+                    :rules="[validateConfirmPassword]"
+                    :counter="userMaximums.password"
+                    label="Confirm password"
+                    required
+                    class="input-group--focused"
+                    :disabled="!editingPassword"
+                    type="password"
+                  />
+                </v-form>
               </v-layout>
             </div>
           </div>
@@ -149,12 +167,15 @@ export default Vue.extend({
     userMaximums,
     username: "",
     givenName: "",
+    givenNameValid: true,
     editingGivenName: false,
     familyName: "",
+    familyNameValid: true,
     editingFamilyName: false,
     email: "",
     password: "",
     confirmPassword: "",
+    passwordValid: true,
     editingPassword: false,
     nameRules,
     passwordRules: [],
