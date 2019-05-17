@@ -32,8 +32,9 @@
                 </v-btn>
                 <v-text-field
                   v-model="givenName"
-                  :rules="givenNameRules"
-                  :counter="userMaximums.givenName"
+                  :rules="nameRules"
+                  :counter="userMaximums.name"
+                  :error-count="errorCountGivenName"
                   label="Given name"
                   required
                   :disabled="!editingGivenName"
@@ -54,8 +55,8 @@
                 </v-btn>
                 <v-text-field
                   v-model="familyName"
-                  :rules="familyNameRules"
-                  :counter="userMaximums.givenName"
+                  :rules="nameRules"
+                  :counter="userMaximums.name"
                   label="Family name"
                   required
                   :disabled="!editingFamilyName"
@@ -79,7 +80,10 @@
                   :counter="userMaximums.password"
                   label="Password"
                   required
+                  @input="validatePassword"
+                  class="input-group--focused"
                   :disabled="!editingPassword"
+                  type="password"
                 />
               </v-layout>
             </div>
@@ -96,11 +100,14 @@
                 </v-btn>
                 <v-text-field
                   v-model="confirmPassword"
-                  :rules="confirmPasswordRules"
+                  :error-messages="confirmPasswordError"
+                  :rules="[validateConfirmPassword]"
                   :counter="userMaximums.password"
                   label="Confirm password"
                   required
+                  class="input-group--focused"
                   :disabled="!editingPassword"
+                  type="password"
                 />
               </v-layout>
             </div>
@@ -126,9 +133,10 @@
 </template>
 
 <script lang="ts">
+import { isBoolean } from "lodash";
 import Vue from "vue";
 
-import { familyNameRules, givenNameRules, userMaximums } from "@/model/User";
+import { nameRules, userMaximums } from "@/model/User";
 
 export default Vue.extend({
   beforeMount() {
@@ -148,10 +156,10 @@ export default Vue.extend({
     password: "",
     confirmPassword: "",
     editingPassword: false,
-    givenNameRules,
-    familyNameRules,
+    nameRules,
     passwordRules: [],
-    confirmPasswordRules: []
+    confirmPasswordRules: [],
+    confirmPasswordError: [] as Array<string | boolean>
   }),
   methods: {
     getUser() {
@@ -175,6 +183,14 @@ export default Vue.extend({
     },
     editPassword() {
       this.editingPassword = !this.editingPassword;
+    },
+    validatePassword() {
+      this.validateConfirmPassword(this.confirmPassword);
+    },
+    validateConfirmPassword(v: string) {
+      const status = v === this.password || "The passwords do not match";
+      this.confirmPasswordError = isBoolean(status) ? [] : [status];
+      return status;
     }
   }
 });
