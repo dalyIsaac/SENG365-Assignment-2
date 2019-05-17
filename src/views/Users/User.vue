@@ -154,7 +154,7 @@
 import { isBoolean } from "lodash";
 import Vue from "vue";
 
-import { nameRules, userMaximums } from "@/model/User";
+import { nameRules, passwordRules ,userMaximums } from "@/model/User";
 
 export default Vue.extend({
   beforeMount() {
@@ -178,32 +178,59 @@ export default Vue.extend({
     passwordValid: true,
     editingPassword: false,
     nameRules,
-    passwordRules: [],
+    passwordRules,
     confirmPasswordRules: [],
     confirmPasswordError: [] as Array<string | boolean>
   }),
   methods: {
-    getUser() {
-      Vue.axiosAuthorized()
-        .get("/users/" + this.id)
-        .then(res => {
-          this.username = res.data.username;
-          this.givenName = res.data.givenName;
-          this.familyName = res.data.familyName;
+    async getUser(props?: Array<"givenName" | "familyName">) {
+      const res = await Vue.axiosAuthorized().get("/users/" + this.id);
 
-          // if this email is populated, then we know we're viewing ourselves,
-          // per the API spec.
-          this.email = res.data.email;
+      if (props) {
+        for (const key of props) {
+          this[key] = res.data[key];
+        }
+      } else {
+        this.username = res.data.username;
+        this.givenName = res.data.givenName;
+        this.familyName = res.data.familyName;
+
+        // if this email is populated, then we know we're viewing ourselves,
+        // per the API spec.
+        this.email = res.data.email;
+      }
+    },
+    async editGivenName() {
+      if (this.editingGivenName && this.givenNameValid) {
+        this.editingGivenName = false;
+        await Vue.axiosAuthorized().patch("/users/" + this.id, {
+          givenName: this.givenName
         });
+        this.getUser(["givenName"]);
+      } else {
+        this.editingGivenName = true;
+      }
     },
-    editGivenName() {
-      this.editingGivenName = !this.editingGivenName;
+    async editFamilyName() {
+      if (this.editingFamilyName && this.familyNameValid) {
+        this.editingFamilyName = false;
+        await Vue.axiosAuthorized().patch("/users/" + this.id, {
+          familyName: this.familyName
+        });
+        this.getUser(["familyName"]);
+      } else {
+        this.editingFamilyName = true;
+      }
     },
-    editFamilyName() {
-      this.editingFamilyName = !this.editingFamilyName;
-    },
-    editPassword() {
-      this.editingPassword = !this.editingPassword;
+    async editPassword() {
+      if (this.editingPassword && this.password) {
+        this.editingPassword = false;
+        await Vue.axiosAuthorized().patch("/users/" + this.id, {
+          password: this.password
+        });
+      } else {
+        this.editingPassword = true;
+      }
     },
     validatePassword() {
       this.validateConfirmPassword(this.confirmPassword);
