@@ -22,7 +22,7 @@
             <v-list-tile
               v-for="(child, i) in item.children"
               :key="i"
-              @click="child.click ? child.click : navigateTo(child.route)"
+              @click="child.click !== undefined ? child.click() : navigateTo(child.route)"
             >
               <v-list-tile-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
