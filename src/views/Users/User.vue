@@ -8,13 +8,15 @@
     <v-container grid-list-xl fluid>
       <v-card class="full-width">
         <div class="tile">
-          <p class="label">Username:</p>
-          <p class="value">{{ username }}</p>
+          <p class="subheading label">Username:</p>
+          <p class="subheading value">{{ username }}</p>
         </div>
+
+        <v-divider/>
 
         <div v-if="email">
           <div class="tile">
-            <p class="label">Given name:</p>
+            <p class="subheading label">Given name:</p>
             <div class="value">
               <v-text-field
                 v-model="givenName"
@@ -27,8 +29,10 @@
             </div>
           </div>
 
+          <v-divider/>
+
           <div class="tile">
-            <p class="label">Family name:</p>
+            <p class="subheading label">Family name:</p>
             <div class="value">
               <v-text-field
                 v-model="familyName"
@@ -41,21 +45,25 @@
             </div>
           </div>
 
+          <v-divider/>
+
           <div class="tile">
-            <p class="label">Email:</p>
-            <p class="value">{{ email }}</p>
+            <p class="subheading label">Email:</p>
+            <p class="subheading value">{{ email }}</p>
           </div>
         </div>
 
         <div v-else>
           <div class="tile">
-            <p class="label">Given name:</p>
-            <p class="value">{{ givenName }}</p>
+            <p class="subheading label">Given name:</p>
+            <p class="subheading value">{{ givenName }}</p>
           </div>
 
+          <v-divider/>
+
           <div class="tile">
-            <p class="label">Family name:</p>
-            <p class="value">{{ familyName }}</p>
+            <p class="subheading label">Family name:</p>
+            <p class="subheading value">{{ familyName }}</p>
           </div>
         </div>
       </v-card>
