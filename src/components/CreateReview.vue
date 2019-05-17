@@ -7,14 +7,52 @@
     </template>
 
     <v-card>
-      <v-card-title class="headline grey lighten-2" primary-title>Privacy Policy</v-card-title>
+      <v-card-title class="headline grey lighten-2" primary-title>Write a review</v-card-title>
 
-      <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
+      <v-card-text>
+        <v-textarea
+          v-model="reviewBody"
+          :counter="maximums.reviewBody"
+          :rules="reviewBodyRules"
+          label="Write your review here"
+          required
+          box
+          auto-grow
+        />
+        <v-slider
+          v-model="starRating"
+          always-dirty
+          hint="Star rating"
+          min="1"
+          max="5"
+          :tick-labels="[1, 2, 3, 4, 5]"
+          thumb-label
+          persistent-hint
+          ticks="always"
+          tick-size="3"
+          class="mr-4"
+        />
+        <v-slider
+          v-model="costRating"
+          always-dirty
+          hint="Cost rating"
+          min="0"
+          max="4"
+          thumb-label
+          persistent-hint
+          ticks="always"
+          :tick-labels="['Free', '$', '$$', '$$$', '$$$$']"
+          tick-size="3"
+          class="mr-4"
+          v-bind:style="{minWidth: '300px'}"
+        />
+      </v-card-text>
 
       <v-divider></v-divider>
 
       <v-card-actions>
         <v-spacer></v-spacer>
+        <v-btn color="error" flat @click="dialog = false">Cancel</v-btn>
         <v-btn color="primary" flat @click="dialog = false">I accept</v-btn>
       </v-card-actions>
     </v-card>
@@ -23,9 +61,27 @@
 
 <script lang="ts">
 import Vue from "vue";
+
+const maximums = {
+  reviewBody: 1024
+};
+
 export default Vue.extend({
+  props: {
+    venueId: { type: String }
+  },
   data: () => ({
-    dialog: false
+    maximums,
+    dialog: false,
+    reviewBody: "",
+    reviewBodyRules: [
+      (v: string) => !!v || "The review body cannot be empty",
+      (v: string) =>
+        v.length > maximums.reviewBody ||
+        `The review must be less than ${maximums.reviewBody} characters`
+    ],
+    starRating: 1,
+    costRating: 0
   })
 });
 </script>

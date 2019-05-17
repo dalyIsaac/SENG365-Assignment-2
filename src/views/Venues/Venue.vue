@@ -15,7 +15,7 @@
       <v-icon dark>edit</v-icon>
     </v-btn>
 
-    <create-review v-else/>
+    <create-review v-else-if="!isEmpty(venue)" :venueId="id"/>
 
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
