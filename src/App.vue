@@ -19,7 +19,11 @@
                 </v-list-tile-content>
               </v-list-tile>
             </template>
-            <v-list-tile v-for="(child, i) in item.children" :key="i" @click="child.click">
+            <v-list-tile
+              v-for="(child, i) in item.children"
+              :key="i"
+              @click="child.click ? child.click : navigateTo(child.route)"
+            >
               <v-list-tile-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
               </v-list-tile-action>
@@ -51,7 +55,7 @@
 
     <v-content class="container">
       <v-container fluid fill-height>
-          <router-view @change="alert('Hello')"></router-view>
+        <router-view @change="alert('Hello')"></router-view>
       </v-container>
     </v-content>
   </v-app>
@@ -97,6 +101,7 @@ export default Vue.extend({
         text: "Account",
         model: false,
         children: [
+          { icon: "account_circle", text: "View account", route: "/users" },
           { icon: "stop", text: "Sign out", click: () => Vue.logout() }
         ]
       }
