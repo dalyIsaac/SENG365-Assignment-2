@@ -14,6 +14,9 @@
     >
       <v-icon dark>edit</v-icon>
     </v-btn>
+
+    <create-review v-else-if="canReview" :venueId="id" v-on:updatereviews="getReviews"/>
+
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
       <h3 class="mb-3 font-italic font-weight-medium">{{ venue.address }} - {{venue.city}}</h3>
@@ -102,6 +105,7 @@ import ReviewComponent from "@/components/Review.vue";
 import { Review } from "@/model/Review";
 import { Photo } from "@/model/Photo";
 import VCardStars from "@/components/VCardStars.vue";
+import CreateReview from "@/components/CreateReview.vue";
 
 interface Venue {
   venueName: string;
@@ -146,12 +150,17 @@ function indexOfMax(arr: number[]) {
 }
 
 export default Vue.extend({
-  components: { Review: ReviewComponent, "v-card-stars": VCardStars },
+  components: {
+    Review: ReviewComponent,
+    "v-card-stars": VCardStars,
+    CreateReview
+  },
   props: {
     id: { type: String }
   },
   data: () => ({
     baseUrl,
+    canReview: false,
     venue: {} as Venue,
     reviews: [] as Review[],
     meanStarRating: 0,
@@ -165,20 +174,15 @@ export default Vue.extend({
       .get(baseUrl + "/venues/" + this.id)
       .then(res => {
         this.venue = res.data;
+        if (this.venue && this.userId === this.venue.admin.userId) {
+          this.canReview = false;
+        }
       })
       .catch(err => {
         console.error(err);
         this.$router.push({ name: "invalid" });
       });
-    axios
-      .get(baseUrl + "/venues/" + this.id + "/reviews")
-      .then(res => {
-        this.reviews = res.data;
-        this.updateRatingAverages(this.reviews);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    this.getReviews();
   },
   methods: {
     isEmpty,
@@ -186,13 +190,37 @@ export default Vue.extend({
     updateShowLongDescription(): void {
       this.showLongDescription = !this.showLongDescription;
     },
+    getReviews() {
+      axios
+        .get(baseUrl + "/venues/" + this.id + "/reviews")
+        .then(res => {
+          this.reviews = res.data;
+          this.updateRatingAverages(this.reviews);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
     updateRatingAverages(reviews: Review[]): void {
       const costRatings = [0, 0, 0, 0, 0];
       let totalStarRatings = 0;
+      let userHasReviewed = false;
+
       reviews.forEach(el => {
         totalStarRatings += el.starRating;
         costRatings[el.costRating] += 1;
+        if (el.reviewAuthor.userId === this.userId) {
+          userHasReviewed = true;
+        }
       });
+
+      if (!userHasReviewed) {
+        this.canReview = true;
+      }
+
+      if (!isEmpty(this.venue) && this.userId === this.venue.admin.userId) {
+        this.canReview = false;
+      }
 
       this.meanStarRating = totalStarRatings / reviews.length || 0;
       this.modeCostRating = indexOfMax(costRatings);

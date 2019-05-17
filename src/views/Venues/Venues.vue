@@ -52,7 +52,7 @@
         ticks="always"
         tick-size="3"
         class="mr-4"
-      ></v-slider>
+      />
       <v-slider
         v-model="maxCostRating"
         always-dirty
@@ -66,7 +66,7 @@
         tick-size="3"
         class="mr-4"
         v-bind:style="{width: '300px'}"
-      ></v-slider>
+      />
       <v-btn color="info" @click="submit" class="mt36">Search</v-btn>
     </v-layout>
 
