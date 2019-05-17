@@ -10,50 +10,62 @@
       <v-card-title class="headline grey lighten-2" primary-title>Write a review</v-card-title>
 
       <v-card-text>
-        <v-textarea
-          v-model="reviewBody"
-          :counter="maximums.reviewBody"
-          :rules="reviewBodyRules"
-          label="Write your review here"
-          required
-          box
-          auto-grow
-        />
-        <v-slider
-          v-model="starRating"
-          always-dirty
-          hint="Star rating"
-          min="1"
-          max="5"
-          :tick-labels="[1, 2, 3, 4, 5]"
-          thumb-label
-          persistent-hint
-          ticks="always"
-          tick-size="3"
-          class="mr-4"
-        />
-        <v-slider
-          v-model="costRating"
-          always-dirty
-          hint="Cost rating"
-          min="0"
-          max="4"
-          thumb-label
-          persistent-hint
-          ticks="always"
-          :tick-labels="['Free', '$', '$$', '$$$', '$$$$']"
-          tick-size="3"
-          class="mr-4"
-          v-bind:style="{minWidth: '300px'}"
-        />
+        <v-form v-model="valid" ref="form">
+          <v-layout align-center justify-start column fill-height>
+            <v-flex xs-12 class="full-width">
+              <v-textarea
+                v-model="reviewBody"
+                :counter="maximums.reviewBody"
+                :rules="reviewBodyRules"
+                label="Write your review here"
+                required
+                box
+                auto-grow
+              />
+            </v-flex>
+
+            <v-flex xs-12 class="full-width">
+              <v-slider
+                v-model="starRating"
+                always-dirty
+                hint="Star rating"
+                min="1"
+                max="5"
+                :tick-labels="[1, 2, 3, 4, 5]"
+                thumb-label
+                persistent-hint
+                ticks="always"
+                tick-size="3"
+                class="mr-4"
+              />
+            </v-flex>
+
+            <v-flex xs-12 class="full-width">
+              <v-slider
+                v-model="costRating"
+                always-dirty
+                hint="Cost rating"
+                min="0"
+                max="4"
+                thumb-label
+                persistent-hint
+                ticks="always"
+                :tick-labels="['Free', '$', '$$', '$$$', '$$$$']"
+                tick-size="3"
+                class="mr-4"
+                v-bind:style="{minWidth: '300px'}"
+              />
+            </v-flex>
+          </v-layout>
+        </v-form>
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider/>
 
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="error" flat @click="dialog = false">Cancel</v-btn>
-        <v-btn color="primary" flat @click="dialog = false">I accept</v-btn>
+        <v-btn color="primary" :disabled="!valid" flat @click="dialog = false">Submit</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -72,6 +84,7 @@ export default Vue.extend({
   },
   data: () => ({
     maximums,
+    valid: false,
     dialog: false,
     reviewBody: "",
     reviewBodyRules: [
