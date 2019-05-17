@@ -63,6 +63,12 @@ const router = new Router({
       redirect: { name: "home" }
     },
     {
+      name: "users",
+      path: "/users",
+      component: () =>
+        import(/* webpackChunkName: "users" */ "./views/Users/User.vue")
+    },
+    {
       name: "invalid",
       path: "/invalid",
       component: () =>
@@ -78,7 +84,7 @@ export default router;
 
 const bannedRoutes = {
   loggedIn: ["login", "signup"],
-  loggedOut: ["createVenue", "editVenue"]
+  loggedOut: ["createVenue", "editVenue", "users"]
 };
 
 router.beforeEach((to, from, next) => {
