@@ -20,7 +20,12 @@
         label="Sort by"
         v-model="selectedSort"
         return-object
-      ></v-select>
+      />
+      <v-switch
+        v-if="isLoggedIn"
+        v-model="restrictToMyVenues"
+        :label="restrictToMyVenues ? 'Show all venues' : 'Only show venues I\'m admin for'"
+      />
       <v-btn-toggle v-model="desc" mandatory class="mr-4 mt-3">
         <v-tooltip bottom>
           <v-btn flat slot="activator">
@@ -167,6 +172,8 @@ export default Vue.extend({
   },
   components: { Venue: VenueComponent },
   data: () => ({
+    isLoggedIn: false,
+    restrictToMyVenues: false,
     categories: [] as Category[],
     categoryId: undefined as number | undefined,
     city: "",
@@ -257,7 +264,13 @@ export default Vue.extend({
           ({ latitude, longitude } = this.geolocation.coords);
         }
 
+        let adminId = undefined;
+        if (Vue.isLoggedIn() && this.restrictToMyVenues) {
+          adminId = Vue.getUserId();
+        }
+
         const params = {
+          adminId,
           categoryId: this.categoryId,
           city: this.city || undefined,
           count: 11,
@@ -321,7 +334,10 @@ export default Vue.extend({
       this.maxCostRating =
         maxCostRating !== undefined ? toSafeInteger(maxCostRating) : 4;
 
-      // TODO: adminId
+      this.isLoggedIn = Vue.isLoggedIn();
+      if (this.isLoggedIn) {
+        this.restrictToMyVenues = adminId !== undefined ? true : false;
+      }
     },
     updateSelectedCategory(e?: Category): void {
       this.categoryId = e ? e.categoryId : undefined;
