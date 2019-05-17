@@ -212,6 +212,10 @@ export default Vue.extend({
         this.canReview = true;
       }
 
+      if (this.userId === this.venue.admin.userId) {
+        this.canReview = false;
+      }
+
       this.meanStarRating = totalStarRatings / reviews.length || 0;
       this.modeCostRating = indexOfMax(costRatings);
     },
