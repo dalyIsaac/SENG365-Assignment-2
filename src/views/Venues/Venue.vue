@@ -15,7 +15,7 @@
       <v-icon dark>edit</v-icon>
     </v-btn>
 
-    <create-review v-else-if="!isEmpty(venue)" :venueId="id"/>
+    <create-review v-else-if="canReview" :venueId="id"/>
 
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
@@ -160,6 +160,7 @@ export default Vue.extend({
   },
   data: () => ({
     baseUrl,
+    canReview: false,
     venue: {} as Venue,
     reviews: [] as Review[],
     meanStarRating: 0,
@@ -197,10 +198,19 @@ export default Vue.extend({
     updateRatingAverages(reviews: Review[]): void {
       const costRatings = [0, 0, 0, 0, 0];
       let totalStarRatings = 0;
+      let userHasReviewed = false;
+
       reviews.forEach(el => {
         totalStarRatings += el.starRating;
         costRatings[el.costRating] += 1;
+        if (el.reviewAuthor.userId === this.userId) {
+          userHasReviewed = true;
+        }
       });
+
+      if (!userHasReviewed) {
+        this.canReview = true;
+      }
 
       this.meanStarRating = totalStarRatings / reviews.length || 0;
       this.modeCostRating = indexOfMax(costRatings);
