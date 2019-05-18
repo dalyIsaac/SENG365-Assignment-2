@@ -17,7 +17,9 @@
 
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
-      <h3 class="mb-3 font-italic font-weight-medium">{{ venue.address }} - {{venue.city}}</h3>
+      <h3
+        class="mb-3 font-italic font-weight-medium align-center"
+      >{{ venue.address }} - {{venue.city}}</h3>
       <v-carousel v-if="!isEmpty(venue.photos)">
         <v-carousel-item
           v-for="(item, i) in venue.photos"
@@ -264,5 +266,9 @@ export default Vue.extend({
   margin: 0;
   padding: 0;
   text-align: right;
+}
+
+.align-center {
+  text-align: center;
 }
 </style>
