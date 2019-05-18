@@ -85,7 +85,7 @@ export default router;
 
 const bannedRoutes = {
   loggedIn: ["login", "signup"],
-  loggedOut: ["createVenue", "editVenue", "users"]
+  loggedOut: ["createVenue", "editVenue"]
 };
 
 router.beforeEach((to, from, next) => {
