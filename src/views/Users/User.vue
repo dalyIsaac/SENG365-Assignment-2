@@ -1,9 +1,21 @@
 <template>
   <v-layout align-start justify-start column fill-height>
-    <h1>
-      <span v-if="email">Hello</span>
-      {{ familyName }}, {{ givenName }}
-    </h1>
+    <v-layout align-start justify-start row>
+      <user-photo-editor v-if="email" :userId="id"/>
+      <v-avatar v-else size="150px" v-ripple class="ma-3">
+        <v-img
+          :lazy-src="require('@/assets/imagePlaceholder.jpg')"
+          :src="profileImage"
+          class="profile-picture"
+          alt="avatar"
+        />
+      </v-avatar>
+
+      <h1 class="ma-3">
+        <span v-if="email">Hello</span>
+        {{ familyName }}, {{ givenName }}
+      </h1>
+    </v-layout>
 
     <v-container grid-list-xl fluid>
       <v-card class="full-width">
@@ -181,10 +193,16 @@ import { isBoolean } from "lodash";
 import Vue from "vue";
 
 import { nameRules, passwordRules, userMaximums } from "@/model/User";
+import UserPhotoEditor from "@/components/UserPhotoEditor";
+import { baseUrl } from "@/common";
 
 export default Vue.extend({
+  components: {
+    UserPhotoEditor
+  },
   beforeMount() {
     this.getUser();
+    this.profileImage = baseUrl + `/users/${this.id}/photo`;
   },
   props: {
     id: { type: String }
@@ -193,6 +211,7 @@ export default Vue.extend({
     error: "",
     errorSnackbar: false,
     userMaximums,
+    profileImage: "",
     username: "",
     givenName: "",
     givenNameValid: true,
@@ -318,5 +337,15 @@ export default Vue.extend({
 
 .full-width {
   width: 100%;
+}
+
+h1 {
+  line-height: 150px;
+}
+
+.profile-picture {
+  height: 150px;
+  width: 150px;
+  object-fit: contain;
 }
 </style>
