@@ -161,3 +161,10 @@ export default Vue.extend({
 });
 </script>
 
+
+<style scoped>
+.full-width {
+  width: 100%;
+}
+</style>
+
