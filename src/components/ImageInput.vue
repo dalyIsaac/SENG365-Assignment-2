@@ -17,7 +17,7 @@
       style="display:none"
     >
 
-    <v-snackbar :value="errorSnackbar" color="error" :timeout="10">
+    <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
       {{ errorText }}
       <v-btn dark flat @click="errorSnackbar = false">Close</v-btn>
     </v-snackbar>
