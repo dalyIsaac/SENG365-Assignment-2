@@ -7,7 +7,7 @@
             <user-photo-editor v-if="email" :userId="id"/>
             <v-avatar v-else size="150px" v-ripple class="ma-3">
               <v-img
-                :lazy-src="require('@/assets/imagePlaceholder.jpg')"
+                :lazy-src="require('@/assets/profilePicturePlaceholder.png')"
                 :src="profileImage"
                 class="profile-picture"
                 alt="avatar"

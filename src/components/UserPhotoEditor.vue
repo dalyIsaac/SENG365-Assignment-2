@@ -5,7 +5,7 @@
         <v-avatar v-ripple size="150px" class="avatar">
           <v-img
             :key="photo.imageURL"
-            :lazy-src="require('@/assets/imagePlaceholder.jpg')"
+            :lazy-src="require('@/assets/profilePicturePlaceholder.png')"
             :src="photo.imageURL"
             v-on:error="resetUrl"
             class="profile-picture"
