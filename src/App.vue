@@ -89,12 +89,10 @@ export default Vue.extend({
   data: () => ({
     drawer: null,
     loggedOutItems: [
-      { divider: true },
       { icon: "person_add", text: "Sign up", route: "/users/signup" },
       { icon: "person", text: "Login", route: "/users/login" }
     ],
     loggedInItems: [
-      { divider: true },
       { icon: "playlist_add", text: "Create venue", route: "/venues/create" },
       {
         icon: "keyboard_arrow_up",

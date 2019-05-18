@@ -1,83 +1,78 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-container>
-      <v-layout>
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="username"
-            :rules="usernameRules"
-            :counter="maximums.username"
-            label="Username"
-            required
-          />
-        </v-flex>
+    <h1>Sign up</h1>
+    <v-layout row wrap>
+      <v-flex xs12 md4>
+        <v-text-field
+          v-model="username"
+          :rules="usernameRules"
+          :counter="maximums.username"
+          label="Username"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="givenName"
-            :rules="nameRules"
-            :counter="maximums.name"
-            label="Given name"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4>
+        <v-text-field
+          v-model="givenName"
+          :rules="nameRules"
+          :counter="maximums.name"
+          label="Given name"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="familyName"
-            :rules="nameRules"
-            :counter="maximums.name"
-            label="Family name"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4>
+        <v-text-field
+          v-model="familyName"
+          :rules="nameRules"
+          :counter="maximums.name"
+          label="Family name"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="email"
-            :counter="maximums.name"
-            :rules="emailRules"
-            label="Email"
-            required
-          />
-        </v-flex>
+      <v-flex xs12 md4>
+        <v-text-field
+          v-model="email"
+          :counter="maximums.name"
+          :rules="emailRules"
+          label="Email"
+          required
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="password"
-            :rules="passwordRules"
-            :counter="maximums.password"
-            label="Password"
-            class="input-group--focused"
-            @input="validatePassword"
-            required
-            type="password"
-          />
-        </v-flex>
+      <v-flex xs12 md4>
+        <v-text-field
+          v-model="password"
+          :rules="passwordRules"
+          :counter="maximums.password"
+          label="Password"
+          class="input-group--focused"
+          @input="validatePassword"
+          required
+          type="password"
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="confirmPassword"
-            :error-messages="confirmPasswordError"
-            :rules="[validateConfirmPassword]"
-            :counter="maximums.password"
-            label="Confirm password"
-            class="input-group--focused"
-            required
-            type="password"
-          />
-        </v-flex>
+      <v-flex xs12 md4>
+        <v-text-field
+          v-model="confirmPassword"
+          :errorText-messages="confirmPasswordError"
+          :rules="[validateConfirmPassword]"
+          :counter="maximums.password"
+          label="Confirm password"
+          class="input-group--focused"
+          required
+          type="password"
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
-        </v-flex>
+      <v-layout class="full-width" align-end justify-start column fill-height>
+        <v-btn @click="submit" :disabled="!valid" class="mt-4">Submit</v-btn>
+        <p v-if="errorText" class="red--text">{{ errorText }}</p>
       </v-layout>
-    </v-container>
-
-    <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
-      {{ error }}
-      <v-btn dark flat @click="errorSnackbar = false">Close</v-btn>
-    </v-snackbar>
+    </v-layout>
   </v-form>
 </template>
 
@@ -99,8 +94,7 @@ const maximums = {
 export default Vue.extend({
   data: () => ({
     maximums,
-    error: "",
-    errorSnackbar: false,
+    errorText: "",
     username: "",
     givenName: "",
     familyName: "",
@@ -147,20 +141,20 @@ export default Vue.extend({
           });
           this.$router.push("/");
           if (!result) {
-            this.error =
+            this.errorText =
               "Sorry, we couldn't log you in (we know this isn't helpful)";
           }
         })
         .catch(err => {
           if (err.response) {
-            this.error = err.response.statusText;
+            this.errorText = err.response.statusText;
           } else if (isString(err)) {
-            this.error = err;
+            this.errorText = err;
           } else {
-            this.error = "Something bad happened (we know this isn't helpful)";
+            this.errorText =
+              "Something bad happened (we know this isn't helpful)";
           }
-          this.error = err.response ? err.response.statusText : err;
-          this.errorSnackbar = true;
+          this.errorText = err.response ? err.response.statusText : err;
         });
     }
   }

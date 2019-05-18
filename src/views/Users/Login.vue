@@ -1,37 +1,27 @@
 <template>
-  <v-form v-model="valid" ref="form">
-    <v-container>
-      <v-layout>
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="username"
-            :rules="usernameRules"
-            label="Username or email"
-            required
-          />
-        </v-flex>
+  <v-form v-model="valid" ref="form" class="full-width">
+    <h1>Sign in</h1>
+    <v-layout row wrap>
+      <v-flex pa-2 sm12 md6 lg4 xl3 class="full-width">
+        <v-text-field v-model="username" :rules="usernameRules" label="Username or email" required/>
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="password"
-            :rules="passwordRules"
-            label="Password"
-            class="input-group--focused"
-            required
-            type="password"
-          />
-        </v-flex>
+      <v-flex pa-2 sm12 md6 lg4 xl3 class="full-width">
+        <v-text-field
+          v-model="password"
+          :rules="passwordRules"
+          label="Password"
+          class="input-group--focused"
+          required
+          type="password"
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
-        </v-flex>
+      <v-layout class="full-width" align-end justify-start column fill-height>
+        <p v-if="errorText" class="red--text mr-2">{{ errorText }}</p>
+        <v-btn class="mr-2" @click="submit" :disabled="!valid">Submit</v-btn>
       </v-layout>
-    </v-container>
-
-    <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
-      {{ error }}
-      <v-btn dark flat @click="errorSnackbar = false">Close</v-btn>
-    </v-snackbar>
+    </v-layout>
   </v-form>
 </template>
 
@@ -39,8 +29,7 @@
 import Vue from "vue";
 export default Vue.extend({
   data: () => ({
-    error: "",
-    errorSnackbar: false,
+    errorText: "",
     username: "",
     password: "",
     valid: false,
@@ -55,8 +44,7 @@ export default Vue.extend({
         password: this.password
       });
       if (!result) {
-        this.error = "Invalid username or password";
-        this.errorSnackbar = true;
+        this.errorText = "Invalid username, email or password";
       } else {
         this.$router.push("/venues");
       }
@@ -64,3 +52,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style scoped>
+.full-width {
+  width: 100%;
+}
+</style>
