@@ -1,34 +1,29 @@
 <template>
-  <v-form v-model="valid" ref="form">
-    <v-container>
-      <v-layout>
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="username"
-            :rules="usernameRules"
-            label="Username or email"
-            required
-          />
-        </v-flex>
+  <v-form v-model="valid" ref="form" class="full-width">
+    <h1>Sign in</h1>
+    <v-layout row wrap>
+      <v-flex pa-2 sm12 md6 lg4 xl3 class="full-width">
+        <v-text-field v-model="username" :rules="usernameRules" label="Username or email" required/>
+      </v-flex>
 
-        <v-flex xs12 md4>
-          <v-text-field
-            v-model="password"
-            :rules="passwordRules"
-            label="Password"
-            class="input-group--focused"
-            required
-            type="password"
-          />
-        </v-flex>
+      <v-flex pa-2 sm12 md6 lg4 xl3 class="full-width">
+        <v-text-field
+          v-model="password"
+          :rules="passwordRules"
+          label="Password"
+          class="input-group--focused"
+          required
+          type="password"
+        />
+      </v-flex>
 
-        <v-flex xs12 md4>
+      <v-layout class="full-width" align-end justify-start column fill-height>
+        <p v-if="errorText" class="red--text" pa-2>{{ errorText }}</p>
+        <v-flex pa-2>
           <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
         </v-flex>
       </v-layout>
-    </v-container>
-
-    <p v-if="errorText" class="red--text">{{ errorText }}</p>
+    </v-layout>
   </v-form>
 </template>
 
@@ -59,3 +54,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style scoped>
+.full-width {
+  width: 100%;
+}
+</style>
