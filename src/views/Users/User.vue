@@ -2,7 +2,7 @@
   <v-layout align-start justify-start column fill-height full-width>
     <v-layout align-start justify-start row wrap full-width>
       <v-flex xs12 md6>
-        <v-layout align-start justify-center row fill-height>
+        <v-layout :class="avatarClass" transition="slide-x-transition">
           <div>
             <user-photo-editor v-if="email" :userId="id"/>
             <v-avatar v-else size="150px" v-ripple class="ma-3">
@@ -18,7 +18,7 @@
       </v-flex>
 
       <v-flex xs12 md6>
-        <h1 class="ml-3 mt-3 mr-4 mb-3 text-xs-center text-md-right">
+        <h1 class="ma-4 text-xs-center text-md-right">
           <span v-if="email">Hello</span>
           {{ familyName }}, {{ givenName }}
         </h1>
@@ -214,6 +214,19 @@ export default Vue.extend({
   },
   props: {
     id: { type: String }
+  },
+  computed: {
+    avatarClass() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+        case "sm":
+          return "align-start justify-center row fill-height ma-4";
+        case "md":
+        default:
+          return "align-center justify-start row fill-height ma-4";
+          break;
+      }
+    }
   },
   data: () => ({
     error: "",
