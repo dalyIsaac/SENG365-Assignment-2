@@ -50,7 +50,7 @@
                   <v-icon v-if="editingGivenName">save</v-icon>
                   <v-icon v-else class="flipped-icon">edit</v-icon>
                 </v-btn>
-                <v-form v-model="givenNameValid">
+                <v-form v-model="givenNameValid" class="full-width">
                   <v-text-field
                     v-model="givenName"
                     :rules="nameRules"
@@ -80,7 +80,7 @@
                   <v-icon v-if="editingFamilyName">save</v-icon>
                   <v-icon v-else class="flipped-icon">edit</v-icon>
                 </v-btn>
-                <v-form v-model="familyNameValid">
+                <v-form v-model="familyNameValid" class="full-width">
                   <v-text-field
                     v-model="familyName"
                     :rules="nameRules"
