@@ -1,9 +1,13 @@
 <template>
   <v-layout align-start justify-start column fill-height>
-    <h1>
-      <span v-if="email">Hello</span>
-      {{ familyName }}, {{ givenName }}
-    </h1>
+    <v-layout align-start justify-start row>
+      <user-photo-editor v-if="email"/>
+
+      <h1 class="ma-3">
+        <span v-if="email">Hello</span>
+        {{ familyName }}, {{ givenName }}
+      </h1>
+    </v-layout>
 
     <v-container grid-list-xl fluid>
       <v-card class="full-width">
@@ -181,8 +185,12 @@ import { isBoolean } from "lodash";
 import Vue from "vue";
 
 import { nameRules, passwordRules, userMaximums } from "@/model/User";
+import UserPhotoEditor from "@/components/UserPhotoEditor";
 
 export default Vue.extend({
+  components: {
+    UserPhotoEditor
+  },
   beforeMount() {
     this.getUser();
   },
@@ -318,5 +326,9 @@ export default Vue.extend({
 
 .full-width {
   width: 100%;
+}
+
+h1 {
+  line-height: 150px;
 }
 </style>
