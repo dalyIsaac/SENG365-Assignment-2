@@ -15,7 +15,7 @@
       <v-icon dark>edit</v-icon>
     </v-btn>
 
-    <create-review v-else-if="canReview" :venueId="id" v-on:updatereviews="getReviews"/>
+    <create-review v-else-if="canReview" :venueId="venueId" v-on:updatereviews="getReviews"/>
 
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
@@ -24,7 +24,7 @@
         <v-carousel-item
           v-for="(item, i) in venue.photos"
           :key="i"
-          :src="`${baseUrl}/venues/${id}/photos/${item.photoFilename}`"
+          :src="`${baseUrl}/venues/${venueId}/photos/${item.photoFilename}`"
           reverse-transition="fade"
           transition="fade"
         ></v-carousel-item>
@@ -78,9 +78,11 @@
       </v-container>
 
       <div class="full-width">
-        <p
-          class="font-italic text-lg-right text-md-right text-sm-center text-xs-center mr-4"
-        >Added by {{ venue.admin.username }} on {{ new Date(venue.dateAdded).toLocaleString() }} UTC</p>
+        <p class="font-italic text-lg-right text-md-right text-sm-center text-xs-center mr-4">
+          Added by
+          <router-link :to="`/users/${venue.admin.userId}`">{{ venue.admin.username }}</router-link>
+          {{ new Date(venue.dateAdded).toLocaleString() }} UTC
+        </p>
       </div>
     </v-layout>
 
@@ -156,7 +158,7 @@ export default Vue.extend({
     CreateReview
   },
   props: {
-    id: { type: String }
+    venueId: { type: String }
   },
   data: () => ({
     baseUrl,
@@ -171,7 +173,7 @@ export default Vue.extend({
   beforeMount() {
     this.userId = Vue.getUserId();
     axios
-      .get(baseUrl + "/venues/" + this.id)
+      .get(baseUrl + "/venues/" + this.venueId)
       .then(res => {
         this.venue = res.data;
         if (this.venue && this.userId === this.venue.admin.userId) {
@@ -192,7 +194,7 @@ export default Vue.extend({
     },
     getReviews() {
       axios
-        .get(baseUrl + "/venues/" + this.id + "/reviews")
+        .get(baseUrl + "/venues/" + this.venueId + "/reviews")
         .then(res => {
           this.reviews = res.data;
           this.updateRatingAverages(this.reviews);
@@ -226,7 +228,7 @@ export default Vue.extend({
       this.modeCostRating = indexOfMax(costRatings);
     },
     editVenue() {
-      this.$router.push(`/venues/${this.id}/edit`);
+      this.$router.push(`/venues/${this.venueId}/edit`);
     }
   }
 });

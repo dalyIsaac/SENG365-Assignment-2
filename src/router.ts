@@ -44,7 +44,7 @@ const router = new Router({
       path: "/venues/:id",
       component: () =>
         import(/* webpackChunkName: "venue" */ "./views/Venues/Venue.vue"),
-      props: ({ params }) => ({ id: params.id })
+      props: ({ params }) => ({ venueId: params.id })
     },
     {
       name: "signup",
