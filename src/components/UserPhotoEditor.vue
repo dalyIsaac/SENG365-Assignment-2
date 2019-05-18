@@ -2,7 +2,7 @@
   <v-layout align-center justify-start row fill-height>
     <image-input v-model="photo">
       <div slot="activator">
-        <v-avatar v-ripple size="150px" class="ma-3">
+        <v-avatar v-ripple size="150px" class="avatar">
           <v-img
             :key="photo.imageURL"
             :lazy-src="require('@/assets/imagePlaceholder.jpg')"
@@ -98,5 +98,9 @@ export default Vue.extend({
 
 .upload-prompt {
   line-height: 150px;
+}
+
+.avatar {
+  cursor: grab;
 }
 </style>
