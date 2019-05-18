@@ -18,10 +18,8 @@
       </v-flex>
 
       <v-layout class="full-width" align-end justify-start column fill-height>
-        <p v-if="errorText" class="red--text" pa-2>{{ errorText }}</p>
-        <v-flex pa-2>
-          <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
-        </v-flex>
+        <p v-if="errorText" class="red--text mr-2">{{ errorText }}</p>
+        <v-btn class="mr-2" @click="submit" :disabled="!valid">Submit</v-btn>
       </v-layout>
     </v-layout>
   </v-form>
