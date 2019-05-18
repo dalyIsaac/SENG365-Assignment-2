@@ -1,20 +1,28 @@
 <template>
-  <v-layout align-start justify-start column fill-height>
-    <v-layout align-start justify-start row>
-      <user-photo-editor v-if="email" :userId="id"/>
-      <v-avatar v-else size="150px" v-ripple class="ma-3">
-        <v-img
-          :lazy-src="require('@/assets/imagePlaceholder.jpg')"
-          :src="profileImage"
-          class="profile-picture"
-          alt="avatar"
-        />
-      </v-avatar>
+  <v-layout align-start justify-start column fill-height full-width>
+    <v-layout align-start justify-start row wrap full-width>
+      <v-flex xs12 md6>
+        <v-layout align-start justify-center row fill-height>
+          <div>
+            <user-photo-editor v-if="email" :userId="id"/>
+            <v-avatar v-else size="150px" v-ripple class="ma-3">
+              <v-img
+                :lazy-src="require('@/assets/imagePlaceholder.jpg')"
+                :src="profileImage"
+                class="profile-picture"
+                alt="avatar"
+              />
+            </v-avatar>
+          </div>
+        </v-layout>
+      </v-flex>
 
-      <h1 class="ma-3">
-        <span v-if="email">Hello</span>
-        {{ familyName }}, {{ givenName }}
-      </h1>
+      <v-flex xs12 md6>
+        <h1 class="ml-3 mt-3 mr-4 mb-3 text-xs-center text-md-right">
+          <span v-if="email">Hello</span>
+          {{ familyName }}, {{ givenName }}
+        </h1>
+      </v-flex>
     </v-layout>
 
     <v-container grid-list-xl fluid>
