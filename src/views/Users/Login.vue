@@ -28,10 +28,7 @@
       </v-layout>
     </v-container>
 
-    <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
-      {{ error }}
-      <v-btn dark flat @click="errorSnackbar = false">Close</v-btn>
-    </v-snackbar>
+    <p v-if="errorText" class="red--text">{{ errorText }}</p>
   </v-form>
 </template>
 
@@ -39,8 +36,7 @@
 import Vue from "vue";
 export default Vue.extend({
   data: () => ({
-    error: "",
-    errorSnackbar: false,
+    errorText: "",
     username: "",
     password: "",
     valid: false,
@@ -55,8 +51,7 @@ export default Vue.extend({
         password: this.password
       });
       if (!result) {
-        this.error = "Invalid username or password";
-        this.errorSnackbar = true;
+        this.errorText = "Invalid username, email or password";
       } else {
         this.$router.push("/venues");
       }
