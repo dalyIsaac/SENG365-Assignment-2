@@ -14,9 +14,10 @@
     <v-layout align-center justify-start column fill-height>
       <image-input v-model="photo">
         <div slot="activator">
-          <v-avatar v-ripple v-if="!photo" size="150px" class="ma-3">
+          <v-avatar v-ripple v-if="!photo.imageFile" size="150px" class="ma-3">
             <v-img
-              :src="require('@/assets/imagePlaceholder.jpg')"
+              :lazy-src="require('@/assets/imagePlaceholder.jpg')"
+              :src="photo.imageURL"
               class="profile-picture"
               gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
               alt="placeholder profile picture"
@@ -26,12 +27,13 @@
               >Update your picture</p>
             </v-img>
           </v-avatar>
+
           <v-avatar size="150px" v-ripple v-else class="ma-3">
             <v-img :src="photo.imageURL" class="profile-picture" alt="avatar"/>
           </v-avatar>
         </div>
       </image-input>
-      <v-btn v-if="photo" fab dark small color="primary">
+      <v-btn v-if="photo.imageFile" fab dark small color="primary" @click="savePhoto">
         <v-icon dark>save</v-icon>
       </v-btn>
     </v-layout>
@@ -42,14 +44,43 @@
 import Vue from "vue";
 
 import ImageInput from "@/components/ImageInput.vue";
+import { baseUrl } from "@/common";
 
 export default Vue.extend({
+  props: {
+    userId: { type: String }
+  },
+  beforeMount() {
+    this.URL = `/users/${this.userId}/photo`;
+    this.getPhoto();
+  },
   components: {
     ImageInput
   },
   data: () => ({
-    photo: null as { imageFile: File; imageUrl: string } | null
-  })
+    photo: { imageFile: null, imageURL: "" } as {
+      imageFile: File | null;
+      imageURL: string;
+    } | null,
+    URL: ""
+  }),
+  methods: {
+    savePhoto() {
+      Vue.axiosAuthorized().put(this.URL, this.photo!.imageFile, {
+        headers: {
+          "Content-Type": this.photo!.imageFile!.type
+        }
+      });
+      this.photo!.imageFile = null;
+    },
+    getPhoto() {
+      this.photo = {
+        imageFile: null,
+        imageURL: baseUrl + this.URL
+      };
+      console.log(this.photo);
+    }
+  }
 });
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <v-layout align-start justify-start column fill-height>
     <v-layout align-start justify-start row>
-      <user-photo-editor v-if="email"/>
+      <user-photo-editor v-if="email" :userId="id"/>
 
       <h1 class="ma-3">
         <span v-if="email">Hello</span>
