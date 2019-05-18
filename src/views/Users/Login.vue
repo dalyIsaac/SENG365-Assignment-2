@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="valid" ref="form" class="full-width">
-    <h1>Sign in</h1>
+    <h1>Log in</h1>
     <v-layout row wrap>
       <v-flex pa-2 sm12 md6 lg4 xl3 class="full-width">
         <v-text-field v-model="username" :rules="usernameRules" label="Username or email" required/>
