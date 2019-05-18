@@ -46,7 +46,7 @@ export default Vue.extend({
   grid-column: 2;
   line-height: 28.8px;
   margin: 0;
-  padding: 0 16px;
+  padding: 0 4px 0 0;
   text-align: right;
 }
 </style>
