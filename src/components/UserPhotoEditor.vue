@@ -86,10 +86,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.full-width {
-  width: 100%;
-}
-
 .profile-picture {
   height: 150px;
   width: 150px;

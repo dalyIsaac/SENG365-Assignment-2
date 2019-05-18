@@ -15,8 +15,6 @@
       <v-icon dark>edit</v-icon>
     </v-btn>
 
-    <create-review v-else-if="canReview" :venueId="venueId" v-on:updatereviews="getReviews"/>
-
     <v-layout align-center justify-start column fill-height v-if="!isEmpty(venue)">
       <h1>{{ venue.venueName }}</h1>
       <h3 class="mb-3 font-italic font-weight-medium">{{ venue.address }} - {{venue.city}}</h3>
@@ -86,8 +84,21 @@
       </div>
     </v-layout>
 
-    <v-layout align-center justify-start column fill-height v-if="!isEmpty(reviews)">
-      <h1>Reviews</h1>
+    <v-layout align-center justify-start column fill-height>
+      <v-layout align-start justify-center row fill-height class="full-width">
+        <div class="full-width">
+          <v-divider class="ma-4"/>
+        </div>
+        <div>
+          <h1>Reviews</h1>
+        </div>
+        <div class="full-width">
+          <v-divider class="ma-4"/>
+        </div>
+      </v-layout>
+
+      <create-review v-if="canReview" :venueId="venueId" v-on:updatereviews="getReviews"/>
+
       <Review
         v-for="review in reviews"
         :review="review"
@@ -234,7 +245,7 @@ export default Vue.extend({
 });
 </script>
 
-<style>
+<style scoped>
 .full-width {
   width: 100%;
 }

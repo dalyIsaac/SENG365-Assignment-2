@@ -203,7 +203,11 @@ export default Vue.extend({
 });
 </script>
 
-<style>
+<style scoped>
+.full-width {
+  width: 100%;
+}
+
 .primary-div {
   width: 100%;
   padding: 0;

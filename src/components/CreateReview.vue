@@ -2,8 +2,8 @@
   <div>
     <v-dialog v-model="dialog" width="500">
       <template v-slot:activator="{ on }">
-        <v-btn fab bottom right fixed dark large class="ma-4" color="primary" v-on="on">
-          <v-icon dark>rate_review</v-icon>
+        <v-btn dark large color="primary" class="mb-3" v-on="on">
+          <v-icon left dark>rate_review</v-icon>Write review
         </v-btn>
       </template>
 
@@ -126,3 +126,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style scoped>
+.full-width {
+  width: 100%;
+}
+</style>
