@@ -1,5 +1,11 @@
 <template>
   <v-form v-model="valid" ref="form">
+    <h1 v-if="isEditing">
+      Editing
+      <span class="font-weight-light">{{ venueName }}</span>
+    </h1>
+    <h1 v-else>Create a venue</h1>
+
     <v-layout align-start justify-start row wrap>
       <v-flex xs12 md4 pa-2>
         <v-text-field
