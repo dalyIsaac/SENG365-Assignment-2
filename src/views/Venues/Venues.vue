@@ -269,6 +269,7 @@ export default Vue.extend({
           adminId = Vue.getUserId();
         }
 
+        this.startIndex = 0;
         const params = {
           adminId,
           categoryId: this.categoryId,
