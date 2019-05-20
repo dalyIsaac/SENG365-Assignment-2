@@ -162,7 +162,7 @@ export default Vue.extend({
         .get("/venues/" + this.id)
         .then(res => {
           if (Vue.getUserId() !== res.data.admin.userId) {
-            this.$router.push("/");
+            this.$router.replace("/");
             return;
           }
           this.venueName = res.data.venueName;
