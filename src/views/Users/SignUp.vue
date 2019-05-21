@@ -9,6 +9,7 @@
           :counter="maximums.username"
           label="Username"
           required
+          class="pa-2"
         />
       </v-flex>
 
@@ -19,6 +20,7 @@
           :counter="maximums.name"
           label="Given name"
           required
+          class="pa-2"
         />
       </v-flex>
 
@@ -29,6 +31,7 @@
           :counter="maximums.name"
           label="Family name"
           required
+          class="pa-2"
         />
       </v-flex>
 
@@ -39,6 +42,7 @@
           :rules="emailRules"
           label="Email"
           required
+          class="pa-2"
         />
       </v-flex>
 
@@ -48,7 +52,7 @@
           :rules="passwordRules"
           :counter="maximums.password"
           label="Password"
-          class="input-group--focused"
+          class="pa-2"
           @input="validatePassword"
           required
           type="password"
@@ -58,11 +62,11 @@
       <v-flex xs12 md4>
         <v-text-field
           v-model="confirmPassword"
-          :errorText-messages="confirmPasswordError"
+          :error-messages="confirmPasswordError"
           :rules="[validateConfirmPassword]"
           :counter="maximums.password"
           label="Confirm password"
-          class="input-group--focused"
+          class="pa-2"
           required
           type="password"
         />
