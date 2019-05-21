@@ -11,6 +11,8 @@
           readonly
           v-model="value"
           small
+          :full-icon="fullIcon"
+          :half-icon="halfIcon"
         ></v-rating>
         <p class="stars-text">{{ value }} / {{ numStars }}</p>
       </div>
@@ -30,6 +32,12 @@ export default Vue.extend({
     },
     numStars: {
       type: Number
+    },
+    fullIcon: {
+      type: String
+    },
+    halfIcon: {
+      type: String
     }
   }
 });

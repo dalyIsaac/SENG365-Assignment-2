@@ -64,12 +64,16 @@
                   title="Mean star rating"
                   :value="round(meanStarRating, 1)"
                   :numStars="5"
+                  full-icon="star"
+                  half-icon="star-half"
                 />
 
                 <v-card-stars
                   title="Mode cost rating"
                   :value="round(modeCostRating, 1)"
                   :numStars="4"
+                  full-icon="attach_money"
+                  half-icon="attach_money"
                 />
               </v-list>
             </v-card>
