@@ -96,11 +96,11 @@
       </v-flex>
 
       <v-flex xs12 md4>
-        <v-btn @click="submit" :disabled="!valid">Submit</v-btn>
+        <v-btn @click="submit" :disabled="!valid">Save</v-btn>
       </v-flex>
     </v-layout>
 
-    <div v-if="this.isEditing && !isEmpty(this.photos)">
+    <div v-if="this.isEditing">
       <v-divider class="mt-3 mb-3"/>
       <venue-photo-editor v-bind:photos="photos" v-bind:venueId="this.id"/>
     </div>

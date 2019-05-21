@@ -7,15 +7,17 @@
       <slot name="activator"></slot>
     </div>
 
-    <!-- image input: style is set to hidden and assigned a ref so that it can be triggered -->
-    <input
-      type="file"
-      ref="file"
-      :name="uploadFieldName"
-      @change="onFileChange(
-          $event.target.name, $event.target.files)"
-      style="display:none"
-    >
+    <form id="input-file-id" style="display:none">
+      <!-- image input: style is set to hidden and assigned a ref so that it can be triggered -->
+      <input
+        type="file"
+        ref="file"
+        :name="uploadFieldName"
+        @change="onFileChange(
+            $event.target.name, $event.target.files)"
+        style="display:none"
+      >
+    </form>
 
     <v-snackbar :value="errorSnackbar" color="error" :timeout="0">
       {{ errorText }}
@@ -67,6 +69,7 @@ export default Vue.extend({
           const imageURL = URL.createObjectURL(imageFile);
           // Emit the FormData and image URL to the parent component
           this.$emit("input", { imageFile, imageURL });
+          (document.getElementById("input-file-id") as HTMLFormElement).reset();
         }
       }
     }

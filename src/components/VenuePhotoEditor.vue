@@ -2,8 +2,8 @@
   <v-layout align-start justify-start column fill-height>
     <v-layout align-start justify-start row wrap fill-height>
       <v-flex v-for="photo in localPhotos" v-bind:key="photo.photoFilename" xs12 sm6 md4 row pa-2>
-        <v-card flat tile>
-          <v-img :src="photo.photoFilename" aspect-ratio="2.75"/>
+        <v-card flat tile class="photo">
+          <v-img :src="getPhotoPath(photo)" aspect-ratio="2.75" height="150px"/>
 
           <v-card-title primary-title>
             <div class="photo-description">{{ photo.photoDescription }}</div>
@@ -32,7 +32,7 @@
         <v-btn fab bottom right fixed dark large class="ma-4" color="primary" v-on="on">
           <v-tooltip top>
             <v-btn flat slot="activator">
-              <v-icon>add</v-icon>
+              <v-icon>add_a_photo</v-icon>
             </v-btn>
             <span>Add another photo</span>
           </v-tooltip>
@@ -110,34 +110,44 @@ export default Vue.extend({
   components: {
     ImageInput
   },
-  beforeMount() {
-    this.updatePhotos(this.photos);
+  watch: {
+    photos() {
+      this.localPhotos = this.photos;
+    }
   },
   props: {
     photos: { type: Array as () => Photo[] },
     venueId: { type: String }
   },
-  data: () => ({
-    maximums,
-    error: "",
-    errorSnackbar: false,
-    localPhotos: [] as Photo[],
-    uploadPhotoDialog: false,
-    newPhoto: {
-      photo: null as { imageFile: File; imageUrl: string } | null,
-      isPrimary: false,
-      description: ""
-    },
-    descriptionRules: [
-      (v: string) =>
-        v.length <= maximums.description ||
-        `Description must be less than ${maximums.description} characters`
-    ]
-  }),
+  data() {
+    return {
+      baseUrl,
+      maximums,
+      error: "",
+      errorSnackbar: false,
+      localPhotos: this.photos as Photo[],
+      uploadPhotoDialog: false,
+      newPhoto: {
+        photo: null as { imageFile: File; imageUrl: string } | null,
+        isPrimary: false,
+        description: ""
+      },
+      descriptionRules: [
+        (v: string) =>
+          v.length <= maximums.description ||
+          `Description must be less than ${maximums.description} characters`
+      ]
+    };
+  },
   methods: {
+    getPhotoPath(photo: Photo) {
+      return `${baseUrl}/venues/${this.venueId}/photos/${photo.photoFilename}`;
+    },
     async setPrimary(photo: Photo) {
       try {
-        await Vue.axiosAuthorized().post(photo.photoFilename + "/setPrimary");
+        await Vue.axiosAuthorized().post(
+          this.getPhotoPath(photo) + "/setPrimary"
+        );
         this.getPhotos();
       } catch (error) {
         this.error = error.response ? error.response.statusText : error;
@@ -146,7 +156,7 @@ export default Vue.extend({
     },
     async deletePhoto(photo: Photo) {
       try {
-        await Vue.axiosAuthorized().delete(photo.photoFilename);
+        await Vue.axiosAuthorized().delete(this.getPhotoPath(photo));
         this.getPhotos();
       } catch (error) {
         this.error = error.response ? error.response.statusText : error;
@@ -155,18 +165,7 @@ export default Vue.extend({
     },
     async getPhotos() {
       const res = await Vue.axiosAuthorized().get(`/venues/${this.venueId}`);
-      this.updatePhotos(res.data.photos);
-    },
-    updatePhotos(photos: Photo[]) {
-      this.localPhotos = [];
-      photos.forEach(photo => {
-        this.localPhotos.push({
-          ...photo,
-          photoFilename: `${baseUrl}/venues/${this.venueId}/photos/${
-            photo.photoFilename
-          }`
-        });
-      });
+      this.localPhotos = res.data.photos;
     },
     uploadPhoto() {
       if (
@@ -227,5 +226,9 @@ export default Vue.extend({
 
 .photo-description {
   height: 150px;
+}
+
+.photo {
+  min-width: 300px;
 }
 </style>
