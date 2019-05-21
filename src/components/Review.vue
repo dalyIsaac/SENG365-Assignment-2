@@ -16,9 +16,9 @@
       half-icon="attach_money"
     />
     <p class="font-italic text-lg-right text-md-right text-sm-center text-xs-center mt-1 mr-4 mb-3">
-      Written by
+      Review added by
       <router-link :to="`/users/${review.reviewAuthor.userId}`">{{ review.reviewAuthor.username }}</router-link>
-      on {{ new Date(review.timePosted).toLocaleString() }} UTC
+      at {{ new Date(review.timePosted).toLocaleString() }} UTC
     </p>
   </v-card>
 </template>
