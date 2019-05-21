@@ -103,9 +103,10 @@
         </div>
       </v-layout>
 
-      <create-review v-if="canReview" :venueId="venueId" v-on:updatereviews="getReviews"/>
+      <create-review v-if="canReview" :venueId="venueId" v-on:updatereviews="updateReviews()"/>
 
       <Review
+        class="ma-2"
         v-for="review in reviews"
         :review="review"
         v-bind:key="review.userId + review.timePosted"
@@ -209,6 +210,10 @@ export default Vue.extend({
     updateShowLongDescription(): void {
       this.showLongDescription = !this.showLongDescription;
     },
+    updateReviews() {
+      this.canReview = false;
+      this.getReviews();
+    },
     getReviews() {
       axios
         .get(baseUrl + "/venues/" + this.venueId + "/reviews")
@@ -233,7 +238,7 @@ export default Vue.extend({
         }
       });
 
-      if (!userHasReviewed) {
+      if (!userHasReviewed && this.userId !== null) {
         this.canReview = true;
       }
 
