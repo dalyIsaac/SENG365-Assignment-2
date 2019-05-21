@@ -35,7 +35,7 @@ export default Vue.extend({
     errorSnackbar: false,
     errorText: "",
     uploadFieldName: "file",
-    maxSize: 20480
+    maxSize: 20000000
   }),
   props: {
     // Use "value" to enable using v-model
@@ -49,7 +49,6 @@ export default Vue.extend({
       const { maxSize } = this;
       const imageFile = file[0];
       if (file.length > 0) {
-        const size = imageFile.size / maxSize / maxSize;
         if (
           !(
             imageFile.type.match("image/jpeg") ||
@@ -59,7 +58,7 @@ export default Vue.extend({
           // check whether the upload is an image
           this.errorSnackbar = true;
           this.errorText = "Please choose either a JPEG or PNG image file";
-        } else if (size > 1) {
+        } else if (imageFile.size > this.maxSize) {
           // check whether the size is greater than the size limit
           this.errorSnackbar = true;
           this.errorText =
