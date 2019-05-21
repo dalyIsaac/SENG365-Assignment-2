@@ -21,11 +21,6 @@
         v-model="selectedSort"
         return-object
       />
-      <v-switch
-        v-if="isLoggedIn"
-        v-model="restrictToMyVenues"
-        :label="restrictToMyVenues ? 'Show all venues' : 'Only show venues I\'m admin for'"
-      />
       <v-btn-toggle v-model="desc" mandatory class="mr-4 mt-3">
         <v-tooltip bottom>
           <v-btn flat slot="activator">
@@ -40,6 +35,11 @@
           <span>Ascending</span>
         </v-tooltip>
       </v-btn-toggle>
+      <v-switch
+        v-if="isLoggedIn"
+        v-model="restrictToMyVenues"
+        :label="restrictToMyVenues ? 'Show all venues' : 'Only show venues I\'m admin for'"
+      />
       <v-slider
         v-model="minStarRating"
         always-dirty
